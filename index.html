@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arquitectura Efímera — Repositorio Académico</title>
+<meta name="description" content="Repositorio académico de la asignatura Arquitectura Efímera: stand comercial RUTAS, habitáculo en guadua, marco normativo y propuesta completa de vivienda de emergencia modular, con referentes y bitácora.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&amp;family=Inter:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ARQUITECTURA EFÍMERA — REPOSITORIO ACADÉMICO
+   Archivo único: HTML + CSS + JS.
+   Dirección: prensa underground. Papel blanco, tinta negra,
+   un solo rojo de señal y tipografía expandida a sangre.
+   El modo edición revela la retícula: la página se monta
+   y se desmonta como aquello que documenta.
+   ============================================================ */
+
+/* ---------- 1. TOKENS ---------- */
+:root{
+  --paper:   #ffffff;
+  --ink:     #0b0b0b;
+  --ink-60:  #55555a;
+  --ink-35:  #8e8e94;
+  --red:     #ff2d0a;
+  --grey:    #f1f1ef;
+  --grey-2:  #e4e4e0;
+
+  --display: "Archivo", "Arial Black", "Helvetica Neue", Impact, sans-serif;
+  --sans:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono:    "Space Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --gutter:  clamp(16px, 3.4vw, 44px);
+  --max:     1560px;
+  --hair:    1px;
+  --ease:    cubic-bezier(.22,.61,.36,1);
+}
+
+/* ---------- 2. BASE ---------- */
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:clip;                 /* clip, no hidden: hidden rompe el sticky */
+}
+img{ max-width:100%; display:block; }
+[hidden]{ display:none !important; }   /* la regla de img no debe pisar el atributo hidden */
+a{ color:inherit; }
+button{ font-family:inherit; }
+:focus-visible{ outline:3px solid var(--red); outline-offset:2px; }
+
+/* Grano de impresión: da textura de papel a los bloques negros */
+.grain::after{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.28;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+
+.wrap{ width:100%; max-width:var(--max); margin:0 auto; padding-inline:var(--gutter); }
+
+/* Micro-etiquetas */
+.mono{
+  font-family:var(--mono); font-size:.625rem; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink);
+}
+.mono.dim{ color:var(--ink-35); font-weight:400; }
+.mono.red{ color:var(--red); }
+
+/* Tipografía expandida a sangre */
+.xl, .lg, .md{
+  font-family:var(--display); font-weight:900; font-stretch:125%;
+  line-height:.82; letter-spacing:-.028em; text-transform:uppercase;
+  margin:0;
+}
+.xl{ font-size:clamp(3.1rem, 17.4vw, 16.9rem); }
+.lg{ font-size:clamp(1.85rem, 10.1vw, 9.8rem); }
+.md{ font-size:clamp(1.6rem, 5.6vw, 5.2rem); line-height:.86; }
+
+/* ---------- 3. BARRA SUPERIOR ---------- */
+.topbar{
+  position:sticky; top:0; z-index:60;
+  background:var(--paper); border-bottom:2px solid var(--ink);
+}
+.topbar-in{ display:flex; align-items:center; gap:clamp(10px,2.4vw,34px); height:46px; }
+.brand{ font-family:var(--mono); font-size:.625rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; white-space:nowrap; }
+.brand sup{ font-size:.5rem; }
+.topnav{ margin-left:auto; display:flex; gap:clamp(8px,1.6vw,22px); }
+.topnav a{
+  font-family:var(--mono); font-size:.625rem; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; text-decoration:none; color:var(--ink);
+  position:relative; padding-bottom:2px;
+}
+.topnav a::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
+  background:var(--red); transform:scaleX(0); transform-origin:left;
+  transition:transform .2s var(--ease);
+}
+.topnav a:hover::after{ transform:scaleX(1); }
+
+.lock{
+  display:inline-flex; align-items:center; gap:6px; height:26px; padding:0 10px;
+  background:var(--paper); border:2px solid var(--ink); cursor:pointer; color:var(--ink);
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  transition:background .16s var(--ease), color .16s var(--ease);
+}
+.lock:hover{ background:var(--ink); color:var(--paper); }
+body.edit-on .lock{ background:var(--red); border-color:var(--red); color:#fff; }
+.lock svg{ width:10px; height:10px; }
+
+/* ---------- 4. HERO ---------- */
+.hero{ position:relative; padding-top:clamp(20px,4vw,46px); }
+.hero::before{                       /* retícula de replanteo, sólo al montar */
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:1;
+  background-image:
+    linear-gradient(to right, var(--red) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--red) 1px, transparent 1px);
+  background-size:56px 56px; opacity:0; transition:opacity .4s var(--ease);
+}
+body.edit-on .hero::before{ opacity:.16; }
+
+.hero-meta{
+  display:flex; flex-wrap:wrap; gap:6px clamp(14px,3vw,40px);
+  padding-bottom:14px;
+}
+.hero-title{ position:relative; }
+.hero-title .xl{ position:relative; z-index:2; }
+
+/* Tarjeta roja que pisa el titular: enlace al manual */
+.doc-card{
+  position:absolute; z-index:3; right:0; bottom:8%;
+  width:clamp(150px, 20vw, 268px);
+  background:var(--red); color:#fff; text-decoration:none;
+  padding:14px 14px 12px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .22s var(--ease);
+}
+.doc-card:hover{ transform:translate(-4px,-4px); box-shadow:8px 8px 0 var(--ink); }
+.doc-card .doc-k{ font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; opacity:.75; }
+.doc-card .doc-t{ font-size:.8125rem; font-weight:600; line-height:1.28; }
+.doc-card .doc-go{
+  margin-top:2px; display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,.45); padding-top:8px;
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+}
+
+.hero-foot{
+  display:grid; grid-template-columns:1.25fr 1fr; gap:clamp(18px,4vw,60px);
+  align-items:start; padding:18px 0 26px; border-top:2px solid var(--ink); margin-top:10px;
+}
+.hero-foot p{ margin:0; font-size:clamp(.95rem,1.15vw,1.125rem); line-height:1.5; max-width:52ch; }
+.hero-foot .side{ display:flex; flex-direction:column; gap:6px; }
+
+/* Cinta rodante */
+.ticker{ background:var(--ink); color:var(--paper); overflow:hidden; position:relative; border-block:2px solid var(--ink); }
+.ticker-track{ display:flex; width:max-content; animation:roll 38s linear infinite; }
+.ticker span{
+  font-family:var(--mono); font-size:.6875rem; font-weight:700; letter-spacing:.2em;
+  text-transform:uppercase; padding:9px 0; white-space:nowrap;
+}
+.ticker span i{ color:var(--red); font-style:normal; padding-inline:14px; }
+@keyframes roll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+.ticker:hover .ticker-track{ animation-play-state:paused; }
+
+/* Ficha de datos */
+.ficha{ display:grid; grid-template-columns:repeat(6,1fr); }
+.ficha-cell{ padding:14px 14px 16px 0; border-right:var(--hair) solid var(--ink); }
+.ficha-cell:last-child{ border-right:0; }
+.ficha-cell:not(:first-child){ padding-left:14px; }
+.ficha-cell dt{ margin:0 0 5px; }
+.ficha-cell dd{ margin:0; font-size:.875rem; font-weight:500; line-height:1.35; }
+
+/* ---------- 5. LÁMINAS ---------- */
+.section{ padding-block:clamp(48px,7vw,104px); border-top:2px solid var(--ink); }
+.plate{ display:grid; grid-template-columns:1fr auto; gap:18px; align-items:end; margin-bottom:clamp(24px,3.4vw,44px); }
+.plate-code{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.plate-code .tag{
+  background:var(--ink); color:var(--paper); padding:3px 8px;
+  font-family:var(--mono); font-size:.625rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+}
+.plate p{ margin:14px 0 0; max-width:60ch; color:var(--ink-60); }
+.plate-side{ text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+
+/* ---------- 6. PROYECTO DESTACADO ---------- */
+.feature{ margin-bottom:clamp(36px,5vw,72px); }
+.feature-head{ display:grid; grid-template-columns:auto 1fr; gap:clamp(14px,3vw,36px); align-items:end; border-bottom:2px solid var(--ink); padding-bottom:12px; }
+.feature-head .idx{ font-family:var(--mono); font-size:.75rem; font-weight:700; color:var(--red); letter-spacing:.14em; }
+.feature-sub{ display:flex; flex-wrap:wrap; gap:4px 18px; padding:10px 0 22px; border-bottom:var(--hair) solid var(--ink); margin-bottom:22px; }
+
+/* Imagen a sangre */
+.bleed{ position:relative; width:100vw; margin-left:50%; transform:translateX(-50%); background:var(--ink); }
+.bleed img{ width:100%; }
+.bleed-cap{
+  position:absolute; left:var(--gutter); bottom:10px; z-index:2;
+  background:var(--red); color:#fff; padding:4px 9px;
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+}
+
+/* Etiquetas de destino */
+.tags{ display:flex; flex-wrap:wrap; gap:6px; margin:22px 0 0; }
+.tags span{
+  border:2px solid var(--ink); padding:4px 10px;
+  font-family:var(--mono); font-size:.625rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  transition:background .16s var(--ease), color .16s var(--ease), border-color .16s var(--ease);
+}
+.tags span:hover{ background:var(--red); border-color:var(--red); color:#fff; }
+
+/* Rejilla de dibujos */
+.draws{ display:grid; grid-template-columns:1.55fr 1fr; gap:var(--gutter); margin-top:clamp(28px,4vw,56px); align-items:start; }
+.draws-col{ display:grid; gap:var(--gutter); }
+.plate-img{ border:2px solid var(--ink); position:relative; background:var(--paper); }
+.plate-img img{ width:100%; }
+.plate-img figcaption{
+  border-top:2px solid var(--ink); padding:7px 10px; display:flex; justify-content:space-between; gap:10px;
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
+}
+
+/* Galería de maqueta */
+.gallery{ display:grid; grid-template-columns:repeat(2,1fr); gap:var(--gutter);
+  margin-top:clamp(28px,4vw,56px); align-items:start; }
+
+/* Texto a dos columnas */
+.cols{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(20px,3vw,44px); margin-top:clamp(28px,4vw,56px); }
+.col h4{ margin:0 0 10px; font-family:var(--mono); font-size:.6875rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; border-bottom:2px solid var(--ink); padding-bottom:8px; }
+.col p{ margin:0; font-size:.9375rem; line-height:1.62; color:var(--ink-60); }
+
+/* ---------- 7. TABLA DE DATOS ---------- */
+.tbl{ width:100%; border-collapse:collapse; margin-top:clamp(24px,3.4vw,44px); }
+.tbl caption{
+  caption-side:top; text-align:left; padding-bottom:10px;
+  font-family:var(--mono); font-size:.625rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-35);
+}
+.tbl thead th{
+  text-align:left; padding:0 14px 8px 0; border-bottom:2px solid var(--ink);
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--ink-35);
+}
+.tbl td{ padding:12px 14px 12px 0; border-bottom:var(--hair) solid var(--grey-2); vertical-align:top; font-size:.875rem; }
+.tbl tbody tr{ transition:background .15s var(--ease), color .15s var(--ease); }
+.tbl tbody tr:hover{ background:var(--grey); }
+.tbl td:first-child{ font-weight:600; }
+.tbl .num{ font-family:var(--mono); font-size:.75rem; color:var(--ink-35); width:1%; white-space:nowrap; }
+.tbl .end{ text-align:right; padding-right:0; font-family:var(--mono); font-size:.6875rem; color:var(--ink-35); white-space:nowrap; }
+/* Fila destacada, como la pista activa de la referencia */
+.tbl tr.on{ background:var(--ink); color:var(--paper); }
+.tbl tr.on:hover{ background:var(--ink); }
+.tbl tr.on .num, .tbl tr.on .end{ color:var(--red); }
+.tbl tr.on td:first-child{ box-shadow:-10px 0 0 var(--ink); }
+.tbl tr.on td:last-child{ box-shadow:10px 0 0 var(--ink); }
+
+/* ---------- 8. RUTA NUMERADA ---------- */
+/* La línea fina la aporta cada módulo con su sombra, no el hueco de la
+   rejilla: así una celda vacía queda en blanco y no en negro. */
+.route{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--hair); background:var(--paper); border:2px solid var(--ink); margin-top:14px; }
+.route > *{ box-shadow:0 0 0 1px var(--ink); }
+.step{ position:relative; background:var(--paper); padding:16px 16px 20px; display:flex; flex-direction:column; gap:7px; min-height:150px; transition:background .18s var(--ease), color .18s var(--ease); }
+.step:hover{ background:var(--red); color:#fff; }
+.step:hover .step-n, .step:hover span{ color:#fff; }
+.route.route-3{ grid-template-columns:repeat(3,1fr); }
+.step-n{ font-family:var(--display); font-weight:900; font-stretch:125%; font-size:2.1rem; line-height:.8; color:var(--red); }
+.step strong{ font-size:.875rem; font-weight:700; line-height:1.25; }
+.step span{ font-size:.8125rem; line-height:1.5; color:var(--ink-60); }
+
+/* ---------- 9. FIGURA TÉCNICA ---------- */
+.figbox{ display:grid; grid-template-columns:1fr 1.05fr; gap:clamp(20px,4vw,56px); align-items:center; margin-top:clamp(28px,4vw,56px); border-top:2px solid var(--ink); padding-top:clamp(20px,3vw,40px); }
+.axo svg{ width:100%; height:auto; max-width:430px; }
+.axo .layer{ transform:translateY(var(--y,0)); transition:transform .65s var(--ease); }
+.axo:hover .layer, .axo:focus-within .layer{ transform:translateY(var(--yc,0)); }
+.axo .lbl{ transition:opacity .3s var(--ease); }
+.axo:hover .lbl, .axo:focus-within .lbl{ opacity:0; }
+.axo .ln{ fill:none; stroke:var(--ink); stroke-width:1.6; vector-effect:non-scaling-stroke; }
+.axo .ln-soft{ fill:none; stroke:var(--ink-35); stroke-width:1.1; vector-effect:non-scaling-stroke; }
+.axo .ln-dash{ fill:none; stroke:var(--red); stroke-width:1; stroke-dasharray:3 6; vector-effect:non-scaling-stroke; }
+.axo .fill-soft{ fill:var(--grey); }
+.axo text{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.16em; fill:var(--ink); text-transform:uppercase; }
+@keyframes assemble{ from{ transform:translateY(var(--yc,0)); opacity:0; } to{ transform:translateY(var(--y,0)); opacity:1; } }
+.axo .layer{ animation:assemble .85s var(--ease) backwards; }
+.axo .layer:nth-child(2){ animation-delay:.12s; }
+.axo .layer:nth-child(3){ animation-delay:.24s; }
+.axo .layer:nth-child(4){ animation-delay:.36s; }
+.axo .layer:nth-child(5){ animation-delay:.48s; }
+
+/* Nota */
+.note{ border-left:4px solid var(--red); padding-left:18px; margin-top:14px; }
+.note p{ margin:8px 0 0; font-size:.9375rem; color:var(--ink-60); max-width:60ch; }
+
+/* ---------- 10. TARJETAS DE PROYECTO ---------- */
+.grid-projects{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--hair); background:var(--paper); border:2px solid var(--ink); }
+.grid-projects > *{ box-shadow:0 0 0 1px var(--ink); }
+.card{ position:relative; background:var(--paper); display:flex; flex-direction:column; padding-bottom:18px; transition:background .18s var(--ease); }
+.card:hover{ background:var(--grey); }
+.frame{ position:relative; aspect-ratio:4/3; background:var(--grey-2); border-bottom:2px solid var(--ink); display:grid; place-items:center; overflow:hidden; }
+.frame img{ width:100%; height:100%; object-fit:cover; }
+.frame .frame-ph{ display:flex; flex-direction:column; align-items:center; gap:7px; color:var(--ink-35); text-align:center; padding:14px; }
+.frame .frame-ph svg{ width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.4; }
+.frame.has-img .frame-ph{ display:none; }
+body.edit-on .frame{ cursor:pointer; outline:2px dashed var(--red); outline-offset:-6px; }
+.card-body{ padding:16px 18px 0; display:flex; flex-direction:column; gap:9px; }
+.card h3{ margin:0; font-size:1rem; font-weight:700; letter-spacing:-.012em; }
+.card p{ margin:0; font-size:.8125rem; color:var(--ink-60); line-height:1.55; }
+.spec{ margin:4px 0 0; border-top:2px solid var(--ink); }
+.spec div{ display:grid; grid-template-columns:44% 1fr; gap:8px; padding:6px 0; border-bottom:var(--hair) solid var(--grey-2); }
+.spec dt{ font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-35); }
+.spec dd{ margin:0; font-family:var(--mono); font-size:.625rem; }
+
+/* Bloque de texto libre */
+.prose{ max-width:66ch; position:relative; }
+.prose h3{ margin:0 0 10px; font-family:var(--mono); font-size:.6875rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; border-bottom:2px solid var(--ink); padding-bottom:8px; }
+.prose p{ margin:0 0 12px; color:var(--ink-60); font-size:.9375rem; }
+
+
+/* Detalles constructivos en fila */
+.details{ display:grid; grid-template-columns:1fr 1fr; gap:var(--gutter);
+  margin-top:clamp(28px,4vw,56px); align-items:start; }
+.details-col{ display:grid; gap:var(--gutter); align-content:start; }
+
+/* Listas de atributos dentro de una columna de texto */
+.col ul{ margin:10px 0 0; padding-left:1.05em; }
+.col li{ font-size:.875rem; line-height:1.5; color:var(--ink-60); margin-bottom:5px; }
+.col li::marker{ color:var(--red); }
+
+/* Referentes teóricos */
+.refs{ border-top:2px solid var(--ink); margin-top:16px; }
+.ref{
+  position:relative; display:grid; grid-template-columns:auto 1fr;
+  gap:clamp(14px,2.6vw,36px); padding:24px 0 22px;
+  border-bottom:var(--hair) solid var(--grey-2);
+  transition:background .18s var(--ease);
+}
+.ref:hover{ background:var(--grey); }
+.ref-n{
+  font-family:var(--display); font-weight:900; font-stretch:125%;
+  font-size:clamp(1.5rem,3.2vw,2.4rem); line-height:.82; color:var(--red);
+  min-width:2.4ch;
+}
+.ref-head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px; margin-bottom:7px; }
+.ref-head h4{ margin:0; font-size:1.0625rem; font-weight:700; letter-spacing:-.015em; line-height:1.25; }
+.ref-work{ font-size:.9375rem; color:var(--ink-60); font-style:italic; }
+.ref-tag{
+  padding:3px 8px; background:var(--ink); color:var(--paper);
+  font-family:var(--mono); font-size:.5rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; white-space:nowrap;
+}
+.ref p{ margin:0; font-size:.9375rem; line-height:1.62; color:var(--ink-60); max-width:74ch; }
+.ref-use{
+  display:block; margin-top:10px; padding-left:14px;
+  border-left:2px solid var(--red);
+  font-size:.875rem; line-height:1.55; color:var(--ink); max-width:70ch;
+}
+
+/* ---------- 10b. PROPUESTA: renders, modelo y láminas ---------- */
+.bleed.cover img{ height:clamp(320px, 62vw, 88vh); object-fit:cover; object-position:50% 72%; }
+.trio{ display:grid; grid-template-columns:repeat(3,1fr); gap:var(--gutter); margin-top:var(--gutter); align-items:start; }
+.lede{ margin:10px 0 0; max-width:66ch; color:var(--ink-60); font-size:.9375rem; line-height:1.6; }
+.sheets{ display:grid; gap:clamp(24px,3.4vw,44px); margin-top:clamp(18px,2.4vw,28px); }
+.sheets a{ display:block; text-decoration:none; cursor:zoom-in; }
+.sheets figcaption .go{ color:var(--red); white-space:nowrap; }
+.tbl td.st-ok{ color:var(--ink); }
+.tbl td.st-warn{ color:var(--red); }
+.tbl tr.on td.st-warn{ color:var(--red); }
+@media (max-width:860px){ .trio{ grid-template-columns:1fr; } }
+@media (max-width:620px){ .tbl.keep-end .end{ display:table-cell; } .tbl.keep-end td.end{ white-space:normal; min-width:64px; } }
+
+/* ---------- 11. PIE ---------- */
+.foot{ border-top:2px solid var(--ink); padding-top:clamp(28px,4vw,52px); }
+.foot-in{ display:grid; grid-template-columns:1fr auto; gap:20px; align-items:end; padding-bottom:clamp(20px,3vw,36px); }
+.foot p{ margin:8px 0 0; font-size:.75rem; color:var(--ink-35); max-width:62ch; line-height:1.6; }
+.foot-word{
+  font-family:var(--display); font-weight:900; font-stretch:125%; text-transform:uppercase;
+  font-size:clamp(2.4rem, 15.6vw, 15rem); line-height:.78; letter-spacing:-.03em;
+  color:transparent; -webkit-text-stroke:2px var(--ink); padding-bottom:.06em;
+  transition:color .3s var(--ease);
+}
+.foot-word:hover{ color:var(--red); -webkit-text-stroke-color:var(--red); }
+
+/* ============================================================
+   12. MODO EDICIÓN
+   ============================================================ */
+.ed-ctl{ display:none; }
+body.edit-on .ed-ctl{ display:flex; }
+
+body.edit-on [contenteditable="true"]{ outline:1px dashed var(--red); outline-offset:3px; }
+body.edit-on [contenteditable="true"]:hover{ outline-style:solid; }
+body.edit-on [contenteditable="true"]:focus{ outline:2px solid var(--red); background:#fff4f1; }
+
+.ed-btn{
+  align-items:center; justify-content:center; gap:5px;
+  height:26px; min-width:26px; padding:0 8px;
+  background:var(--paper); color:var(--ink); border:2px solid var(--red); cursor:pointer;
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  transition:background .15s var(--ease), color .15s var(--ease);
+}
+.ed-btn:hover{ background:var(--red); color:#fff; }
+.ed-remove{ position:absolute; top:8px; right:8px; z-index:5; }
+
+.ed-add{
+  background:var(--paper); border:0; cursor:pointer; min-height:170px;
+  align-items:center; justify-content:center; flex-direction:column; gap:8px; color:var(--red);
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+}
+.ed-add::before{ content:"+"; font-size:1.9rem; line-height:1; letter-spacing:0; }
+.ed-add:hover{ background:var(--red); color:#fff; }
+
+/* Herramientas de lámina: permanecen en el HTML guardado, sólo se vacían */
+.ed-plate-tools{ display:none; gap:5px; justify-content:flex-end; flex-wrap:wrap; margin-top:10px; }
+body.edit-on .ed-plate-tools{ display:flex; }
+
+.ed-add-section{
+  width:100%; min-height:80px; margin-bottom:clamp(36px,6vw,72px);
+  border:2px dashed var(--red); background:transparent; cursor:pointer; color:var(--red);
+  align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:.625rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase;
+}
+.ed-add-section:hover{ background:var(--red); color:#fff; }
+.frame-clear{ position:absolute; top:8px; left:8px; z-index:5; }
+
+.dock{
+  position:fixed; z-index:70; right:var(--gutter); bottom:18px;
+  display:none; gap:6px; align-items:center; padding:8px;
+  background:var(--paper); border:2px solid var(--ink); box-shadow:6px 6px 0 var(--red);
+}
+body.edit-on .dock{ display:flex; }
+.dock .sep{ width:2px; height:22px; background:var(--ink); }
+.dock-btn{
+  height:32px; padding:0 12px; cursor:pointer; background:var(--paper); color:var(--ink);
+  border:2px solid var(--ink);
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.13em; text-transform:uppercase; white-space:nowrap;
+  transition:background .15s var(--ease), color .15s var(--ease);
+}
+.dock-btn:hover{ background:var(--ink); color:var(--paper); }
+.dock-btn.primary{ background:var(--red); border-color:var(--red); color:#fff; }
+.dock-btn.primary:hover{ background:var(--ink); border-color:var(--ink); }
+.dock-state{ font-family:var(--mono); font-size:.5rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-35); padding-inline:6px 2px; }
+
+.modal{ position:fixed; inset:0; z-index:100; display:none; place-items:center; background:rgba(11,11,11,.55); padding:20px; }
+.modal.open{ display:grid; }
+.modal-card{ width:100%; max-width:360px; background:var(--paper); border:3px solid var(--ink); box-shadow:10px 10px 0 var(--red); padding:24px; }
+.modal-card h3{ margin:12px 0 6px; font-family:var(--display); font-weight:900; font-stretch:125%; font-size:1.7rem; line-height:.9; text-transform:uppercase; letter-spacing:-.02em; }
+.modal-card p{ margin:0 0 16px; font-size:.8125rem; color:var(--ink-60); line-height:1.5; }
+.modal-card input{
+  width:100%; height:42px; padding:0 12px; border:2px solid var(--ink); background:var(--grey); color:var(--ink);
+  font-family:var(--mono); font-size:.875rem; font-weight:700; letter-spacing:.2em;
+}
+.modal-card input:focus{ outline:none; border-color:var(--red); background:var(--paper); }
+.modal-actions{ display:flex; gap:6px; margin-top:14px; }
+.modal-actions .dock-btn{ flex:1; height:38px; }
+.modal-err{ margin:10px 0 0; min-height:14px; font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--red); }
+
+.toast{
+  position:fixed; z-index:110; left:50%; bottom:18px; transform:translate(-50%,18px);
+  padding:10px 16px; background:var(--red); color:#fff;
+  font-family:var(--mono); font-size:.5625rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  opacity:0; pointer-events:none; transition:opacity .22s var(--ease), transform .22s var(--ease);
+  max-width:calc(100vw - 32px); text-align:center;
+}
+.toast.show{ opacity:1; transform:translate(-50%,0); }
+
+.mode-tag{ display:none; align-items:center; gap:6px; font-family:var(--mono); font-size:.5rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); }
+body.edit-on .mode-tag{ display:flex; }
+.mode-tag .dot{ width:6px; height:6px; background:var(--red); }
+
+/* ---------- 13. RESPONSIVO ---------- */
+@media (max-width:1080px){
+  .ficha{ grid-template-columns:repeat(3,1fr); }
+  .ficha-cell{ border-bottom:var(--hair) solid var(--ink); }
+  .ficha-cell:nth-child(3n){ border-right:0; }
+  .route, .route.route-3{ grid-template-columns:repeat(2,1fr); }
+  .grid-projects{ grid-template-columns:repeat(2,1fr); }
+  .cols{ grid-template-columns:1fr 1fr; }
+}
+@media (max-width:860px){
+  .draws{ grid-template-columns:1fr; }
+  .gallery{ grid-template-columns:1fr; }
+  .details, .details-col{ grid-template-columns:1fr; }
+  .ref{ grid-template-columns:1fr; gap:10px; }
+  .ref-n{ font-size:1.4rem; }
+  .figbox{ grid-template-columns:1fr; }
+  .hero-foot{ grid-template-columns:1fr; }
+  .plate{ grid-template-columns:1fr; align-items:start; }
+  .plate-side{ text-align:left; align-items:flex-start; }
+  .topnav{ display:none; }
+  .doc-card{ position:static; width:100%; margin-top:16px; }
+  .foot-in{ grid-template-columns:1fr; align-items:start; }
+}
+@media (max-width:620px){
+  .grid-projects, .route, .route.route-3, .cols{ grid-template-columns:1fr; }
+  .ficha{ grid-template-columns:repeat(2,1fr); }
+  .ficha-cell{ padding-left:0; padding-right:14px; border-right:var(--hair) solid var(--ink); }
+  .ficha-cell:nth-child(2n){ border-right:0; padding-left:14px; padding-right:0; }
+  .tbl .end{ display:none; }
+  .dock{ right:10px; left:10px; bottom:10px; flex-wrap:wrap; justify-content:center; }
+  .dock .sep{ display:none; }
+}
+
+/* ---------- 14. PREFERENCIAS E IMPRESIÓN ---------- */
+@media (prefers-reduced-motion:reduce){
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  .ticker-track{ animation:none !important; }
+  html{ scroll-behavior:auto; }
+}
+@media print{
+  .topbar,.dock,.modal,.toast,.ed-ctl,.ticker{ display:none !important; }
+  .section{ break-inside:avoid; }
+  body{ font-size:10.5pt; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     BARRA SUPERIOR
+     ============================================================ -->
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand">Efímera<sup>™</sup> &nbsp;A‑01/06</div>
+    <div class="mode-tag"><i class="dot"></i> Editando</div>
+    <nav class="topnav" aria-label="Secciones">
+      <a href="#a01">Comercial</a>
+      <a href="#a02">Habitáculo</a>
+      <a href="#a03">Emergencia</a>
+      <a href="#a04">Propuesta</a>
+      <a href="#a05">Referentes</a>
+      <a href="#a06">Bitácora</a>
+    </nav>
+    <button class="lock" id="lockBtn" title="Acceso al modo edición (Ctrl + Shift + E)" aria-label="Acceso al modo edición">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="4" y="10" width="16" height="11"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+      <span id="lockLabel">Acceso</span>
+    </button>
+  </div>
+</header>
+
+<div id="content">
+
+  <!-- ---------- HERO ---------- -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-meta">
+        <span class="mono" data-ed="">Repositorio académico</span>
+        <span class="mono dim" data-ed="">Electiva 3 · Momento 10</span>
+        <span class="mono dim" data-ed="">Universidad Antonio Nariño · Bogotá</span>
+        <span class="mono red" data-ed="">2026</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="lg" data-ed="">Arquitectura</span>
+        <span class="xl" data-ed="">Efímera</span>
+        <a class="doc-card" id="pdfLink" href="manual-ungrd-vivienda-desastre.pdf" target="_blank" rel="noopener">
+          <span class="doc-k" data-ed="">Documento base · PDF</span>
+          <span class="doc-t" data-ed="">Manual para la formulación de proyectos de vivienda en declaratoria de desastre — UNGRD, 2015</span>
+          <span class="doc-go"><span data-ed="">Abrir</span> <span aria-hidden="true">↗</span></span>
+        </a>
+      </h1>
+
+      <div class="hero-foot">
+        <p data-ed="">Lo que se monta para durar poco. Este repositorio reúne el stand comercial RUTAS, el habitáculo en guadua, el marco normativo de la vivienda en emergencia, la propuesta completa de vivienda modular —esquemas, modelo y renders— con sus referentes teóricos, y la bitácora del curso.</p>
+        <div class="side">
+          <span class="mono dim" data-ed="">Montaje / Desmontaje</span>
+          <span class="mono dim" data-ed="">Reversibilidad / Huella cero</span>
+          <span class="mono dim" data-ed="">Habitabilidad / Transición</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker grain" aria-hidden="true">
+    <div class="ticker-track">
+      <span data-ed="">Montaje<i>●</i>Desmontaje<i>●</i>Reversible<i>●</i>Sin huella<i>●</i>Stand RUTAS 10,10 × 6,00 m<i>●</i>Habitáculo 5,40 × 3,40 m<i>●</i>Guadua Ø 10 cm<i>●</i>Cubierta de paja<i>●</i>Puente autoportante de Da Vinci<i>●</i>Vivienda de transición 43,2 m²<i>●</i>Pórticos de guadua c/2,40 m<i>●</i>Lona tensada<i>●</i>NSR‑10<i>●</i>Ley 1523 de 2012<i>●</i></span>
+      <span data-ed="">Montaje<i>●</i>Desmontaje<i>●</i>Reversible<i>●</i>Sin huella<i>●</i>Stand RUTAS 10,10 × 6,00 m<i>●</i>Habitáculo 5,40 × 3,40 m<i>●</i>Guadua Ø 10 cm<i>●</i>Cubierta de paja<i>●</i>Puente autoportante de Da Vinci<i>●</i>Vivienda de transición 43,2 m²<i>●</i>Pórticos de guadua c/2,40 m<i>●</i>Lona tensada<i>●</i>NSR‑10<i>●</i>Ley 1523 de 2012<i>●</i></span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <dl class="ficha">
+      <div class="ficha-cell"><dt class="mono dim">Estudiante</dt><dd data-ed="">Andrés Ricardo Sánchez Martínez</dd></div>
+      <div class="ficha-cell"><dt class="mono dim">Programa</dt><dd data-ed="">Arquitectura — último semestre</dd></div>
+      <div class="ficha-cell"><dt class="mono dim">Institución</dt><dd data-ed="">Universidad Antonio Nariño</dd></div>
+      <div class="ficha-cell"><dt class="mono dim">Asignatura</dt><dd data-ed="">Arquitectura Efímera</dd></div>
+      <div class="ficha-cell"><dt class="mono dim">Docente</dt><dd data-ed="">Arq. Mg. Juan Manuel González Trujillo</dd></div>
+      <div class="ficha-cell"><dt class="mono dim">Actualizado</dt><dd data-ed="">22 / 11 / 2026</dd></div>
+    </dl>
+  </div>
+
+  <main class="wrap" id="sections">
+
+    <!-- ============================================================
+         A-01 · ARQUITECTURA COMERCIAL — PROYECTO RUTAS
+         ============================================================ -->
+    <section class="section" id="a01" data-section="">
+      <div class="plate">
+        <div>
+          <div class="plate-code"><span class="tag" data-ed="">A-01</span><span class="mono dim" data-ed="">Ejercicio de taller</span></div>
+          <h2 class="md" data-ed="">Arquitectura comercial</h2>
+          <p data-ed="">Espacios que se construyen para vender y se desarman cuando termina el evento. El encargo del semestre: un stand para un centro de convenciones, donde la competencia por la atención es el verdadero problema de proyecto.</p>
+        </div>
+        <div class="plate-side">
+          <span class="mono dim" data-ed="">Plancha 01</span>
+          <span class="mono red" data-ed="">Entregado 14/08/2026</span>
+          <div class="ed-plate-tools" data-plate-tools=""></div>
+        </div>
+      </div>
+
+      <!-- PROYECTO DESTACADO -->
+      <div class="feature">
+        <div class="feature-head">
+          <span class="idx" data-ed="">01</span>
+          <h3 class="md" data-ed="">Rutas</h3>
+        </div>
+        <div class="feature-sub">
+          <span class="mono dim" data-ed="">Stand comercial turístico</span>
+          <span class="mono dim" data-ed="">Huella 10,10 × 6,00 m</span>
+          <span class="mono dim" data-ed="">Planta 1:25 · Isométricos 1:50</span>
+          <span class="mono red" data-ed="">Cubierta de paja</span>
+        </div>
+
+        <figure class="bleed" style="margin-block:0;">
+          <img src="img/rutas-render.jpg" alt="Render del stand RUTAS en un centro de convenciones: cubierta de paja, paneles de destinos, mesas de atención y mostrador de recepción" loading="lazy" decoding="async">
+          <figcaption class="bleed-cap" data-ed="">Render general — Stand RUTAS</figcaption>
+        </figure>
+
+        <div class="tags">
+          <span data-ed="">Machu Picchu</span>
+          <span data-ed="">Chichén Itzá</span>
+          <span data-ed="">Petra</span>
+          <span data-ed="">Safari</span>
+          <span data-ed="">Kyoto</span>
+          <span data-ed="">Cultura</span>
+          <span data-ed="">Aventura</span>
+          <span data-ed="">Historia</span>
+        </div>
+
+        <!-- DIBUJOS -->
+        <div class="draws">
+          <figure class="plate-img" style="margin:0;">
+            <img src="img/rutas-planta.jpg" alt="Planta arquitectónica del stand RUTAS a escala 1:25 con recepción, vitrina, baño y bodega" loading="lazy" decoding="async">
+            <figcaption><span data-ed="">Planta arquitectónica</span><span data-ed="">Esc. 1:25</span></figcaption>
+          </figure>
+          <div class="draws-col">
+            <figure class="plate-img" style="margin:0;">
+              <img src="img/rutas-iso-acceso.jpg" alt="Isométrico del stand RUTAS visto desde el acceso" loading="lazy" decoding="async">
+              <figcaption><span data-ed="">Isométrico 01</span><span data-ed="">Esc. 1:50</span></figcaption>
+            </figure>
+            <figure class="plate-img" style="margin:0;">
+              <img src="img/rutas-iso-bodega.jpg" alt="Isométrico del stand RUTAS visto desde la bodega" loading="lazy" decoding="async">
+              <figcaption><span data-ed="">Isométrico 02</span><span data-ed="">Esc. 1:50</span></figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- MEMORIA -->
+        <div class="cols">
+          <div class="col">
+            <h4 data-ed="">Perfil</h4>
+            <p data-ed="">El usuario objetivo valora la posibilidad de explorar nuevos territorios y vivir experiencias significativas, por lo que busca destinos como Machu Picchu, Chichén Itzá, Petra o rutas de naturaleza y aventura. La propuesta está dirigida a personas que priorizan la experiencia cultural, la autenticidad y el descubrimiento por encima de un turismo convencional.</p>
+          </div>
+          <div class="col">
+            <h4 data-ed="">Gag visual — cubierta</h4>
+            <p data-ed="">La cubierta de paja es el elemento visual más reconocible del stand. Su geometría, textura y materialidad buscan generar una asociación inmediata con destinos exóticos, naturaleza, cultura y experiencias de viaje, funcionando como un elemento de atracción dentro del entorno altamente competitivo de un centro de convenciones.</p>
+          </div>
+          <div class="col">
+            <h4 data-ed="">Relación — experiencia</h4>
+            <p data-ed="">La cubierta atrae al visitante desde el exterior; los paneles despiertan su curiosidad por los destinos; las mesas permiten la interacción con los asesores; y la vitrina ubicada en el arco presenta las diferentes actividades y experiencias que pueden ser cotizadas.</p>
+          </div>
+        </div>
+
+        <!-- PROGRAMA -->
+        <table class="tbl">
+          <caption data-ed="">Programa y áreas — planta 1:25</caption>
+          <thead>
+            <tr><th class="num">№</th><th>Espacio</th><th>Función</th><th class="end">Área</th></tr>
+          </thead>
+          <tbody data-rows="specrow">
+            <tr data-item="">
+              <td class="num" data-ed="">01</td>
+              <td data-ed="">Recepción</td>
+              <td data-ed="">Mostrador de atención y primer punto de información del visitante.</td>
+              <td class="end" data-ed="">2,74 m²</td>
+            </tr>
+            <tr data-item="">
+              <td class="num" data-ed="">02</td>
+              <td data-ed="">Vitrina</td>
+              <td data-ed="">Exhibición de actividades y experiencias cotizables, alojada en el arco.</td>
+              <td class="end" data-ed="">1,85 m²</td>
+            </tr>
+            <tr data-item="">
+              <td class="num" data-ed="">03</td>
+              <td data-ed="">Baño</td>
+              <td data-ed="">Servicio interno para el personal del stand durante la feria.</td>
+              <td class="end" data-ed="">2,84 m²</td>
+            </tr>
+            <tr data-item="">
+              <td class="num" data-ed="">04</td>
+              <td data-ed="">Bodega</td>
+              <td data-ed="">Almacenaje de material promocional y de las piezas del montaje.</td>
+              <td class="end" data-ed="">5,29 m²</td>
+            </tr>
+            <tr data-item="">
+              <td class="num" data-ed="">05</td>
+              <td data-ed="">Salón de mesas</td>
+              <td data-ed="">Cuatro mesas bajo la cubierta para la conversación con los asesores.</td>
+              <td class="end" data-ed="">Área libre</td>
+            </tr>
+            <tr data-item="" class="on">
+              <td class="num" data-ed="">06</td>
+              <td data-ed="">Cubierta</td>
+              <td data-ed="">Gag visual: geometría y textura de paja como reclamo a distancia dentro del pabellón.</td>
+              <td class="end" data-ed="">Paja</td>
+            </tr>
+            <tr data-item="">
+              <td class="num" data-ed="">07</td>
+              <td data-ed="">Huella</td>
+              <td data-ed="">Perímetro de la plataforma ocupada sobre el suelo del pabellón ferial.</td>
+              <td class="end" data-ed="">10,10 × 6,00 m</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- OTROS EJERCICIOS -->
+      <div class="plate" style="margin-bottom:18px;">
+        <div><div class="plate-code"><span class="tag" data-ed="">02—</span><span class="mono dim" data-ed="">Otros ejercicios del bloque comercial</span></div></div>
+      </div>
+
+      <div class="grid-projects" data-list="project">
+        <article class="card" data-item="">
+          <div class="frame" data-frame="">
+            <div class="frame-ph">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16"></rect><path d="m3 16 5-5 4 4 3-3 6 6"></path><circle cx="8.5" cy="9" r="1.4"></circle></svg>
+              <span class="mono dim">Render / fotografía</span>
+            </div>
+            <img alt="" hidden="">
+          </div>
+          <div class="card-body">
+            <h3 data-ed="">Próximo ejercicio</h3>
+            <p data-ed="">Sustituye este bloque por el siguiente encargo. En modo edición, haz clic en el marco para cargar el render.</p>
+            <dl class="spec">
+              <div><dt>Lugar</dt><dd data-ed="">—</dd></div>
+              <div><dt>Área</dt><dd data-ed="">— m²</dd></div>
+              <div><dt>Sistema</dt><dd data-ed="">—</dd></div>
+              <div><dt>Montaje</dt><dd data-ed="">—</dd></div>
+            </dl>
+          </div>
+        </article>
+        <article class="card" data-item="">
+          <div class="frame" data-frame="">
+            <div class="frame-ph">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16"></rect><path d="m3 16 5-5 4 4 3-3 6 6"></path><circle cx="8.5" cy="9" r="1.4"></circle></svg>
+              <span class="mono dim">Render / fotografía</span>
+            </div>
+            <img alt="" hidden="">
+          </div>
+          <div class="card-body">
+            <h3 data-ed="">Próximo ejercicio</h3>
+            <p data-ed="">Sustituye este bloque por el siguiente encargo. En modo edición, haz clic en el marco para cargar el render.</p>
+            <dl class="spec">
+              <div><dt>Lugar</dt><dd data-ed="">—</dd></div>
+              <div><dt>Área</dt><dd data-ed="">— m²</dd></div>
+              <div><dt>Sistema</dt><dd data-ed="">—</dd></div>
+              <div><dt>Montaje</dt><dd data-ed="">—</dd></div>
+            </dl>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         A-02 · HABITÁCULO — GUADUA, PIEDRA, METAL
+         ============================================================ -->
+    <section class="section" id="a02" data-section="">
+      <div class="plate">
+        <div>
+          <div class="plate-code"><span class="tag" data-ed="">A-02</span><span class="mono dim" data-ed="">Ejercicio de taller</span></div>
+          <h2 class="md" data-ed="">Habitáculo</h2>
+          <p data-ed="">Naturaleza, espacio y estructura. Un pequeño habitáculo para el descanso y la contemplación, donde la guadua, la piedra y el metal se unen para crear un espacio ligero, resistente y en armonía con el entorno. Pensado como punto de encuentro, lectura y pausa en zonas rurales, fincas, parques o miradores.</p>
+        </div>
+        <div class="plate-side">
+          <span class="mono dim" data-ed="">Plancha 01</span>
+          <span class="mono red" data-ed="">Entregado 21/08/2026</span>
+          <div class="ed-plate-tools" data-plate-tools=""></div>
+        </div>
+      </div>
+
+      <div class="feature-sub">
+        <span class="mono red" data-ed="">Guadua · Piedra · Metal</span>
+        <span class="mono dim" data-ed="">Huella 5,40 × 3,40 m</span>
+        <span class="mono dim" data-ed="">Planta 1:50</span>
+        <span class="mono dim" data-ed="">Guadua Ø 10 cm</span>
+        <span class="mono dim" data-ed="">Cubierta en lámina metálica</span>
+      </div>
+
+      <figure class="bleed" style="margin-block:0;">
+        <img src="img/habitaculo-render-exterior.jpg" alt="Render exterior del habitáculo: columnas de guadua, muro en piedra natural y cubierta plana en lámina metálica sobre una plataforma de concreto, en un paisaje rural de montaña" loading="lazy" decoding="async">
+        <figcaption class="bleed-cap" data-ed="">Render exterior — Habitáculo</figcaption>
+      </figure>
+
+      <div class="cols">
+        <div class="col">
+          <h4 data-ed="">Guadua</h4>
+          <p data-ed="">Soporta la estructura y define el carácter del espacio. Se trabaja en haces de cañas de 10 cm de diámetro, visibles desde el interior y rematadas en cielo raso del mismo material.</p>
+          <ul>
+            <li data-ed="">Ligereza</li>
+            <li data-ed="">Resistencia</li>
+            <li data-ed="">Calidez</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4 data-ed="">Piedra</h4>
+          <p data-ed="">Cierra el costado macizo y levanta la plataforma sobre el terreno. Piedra natural tipo loja sobre una estructura metálica oculta, anclada a piso.</p>
+          <ul>
+            <li data-ed="">Durabilidad</li>
+            <li data-ed="">Textura natural</li>
+            <li data-ed="">Conexión con el entorno</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4 data-ed="">Metal</h4>
+          <p data-ed="">Resuelve lo que la guadua no puede resolver sola: las uniones. Platinas con pernos abrazan las cañas y una base metálica las transfiere al dado de concreto.</p>
+          <ul>
+            <li data-ed="">Estructura</li>
+            <li data-ed="">Precisión</li>
+            <li data-ed="">Contraste</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="gallery">
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/habitaculo-planta.jpg" alt="Planta arquitectónica del habitáculo a escala 1:50, con cotas de 5,40 por 3,40 metros" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Planta arquitectónica</span><span data-ed="">Esc. 1:50</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/habitaculo-axonometria.jpg" alt="Axonometría explotada del habitáculo: cubierta en lámina metálica, cielo raso en guadua, estructura en guadua con uniones metálicas, muro en piedra, piso en concreto y cimentación en piedra" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Axonometría explotada</span><span data-ed="">Capas del sistema</span></figcaption>
+        </figure>
+      </div>
+
+      <h3 class="mono" style="margin:clamp(32px,4vw,56px) 0 0;" data-ed="">Detalles constructivos</h3>
+      <div class="details">
+        <div class="details-col">
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/habitaculo-detalle-cubierta.jpg" alt="Detalle de cubierta: lámina metálica aluzinc, caña guadua, viga en guadua y canal metálico" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Detalle cubierta</span><span data-ed="">01</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/habitaculo-detalle-muro.jpg" alt="Detalle de muro: piedra natural tipo loja sobre estructura metálica oculta con anclaje a piso" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Detalle muro</span><span data-ed="">02</span></figcaption>
+        </figure>
+        </div>
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/habitaculo-detalle-anclaje.jpg" alt="Detalle de anclaje: haz de guaduas de 10 cm abrazado por platinas metálicas con pernos sobre una base metálica anclada a un dado de concreto" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Detalle anclaje</span><span data-ed="">03</span></figcaption>
+        </figure>
+      </div>
+
+      <figure class="bleed" style="margin-block:clamp(28px,4vw,56px) 0;">
+        <img src="img/habitaculo-render-interior.jpg" alt="Render interior del habitáculo: mesa larga de madera bajo el cielo raso de guadua, con el muro de piedra al fondo y el paisaje abierto al costado" loading="lazy" decoding="async">
+        <figcaption class="bleed-cap" data-ed="">Render interior — Mesa larga y cielo raso en guadua</figcaption>
+      </figure>
+
+      <h3 class="mono" style="margin:clamp(32px,4vw,56px) 0 0;" data-ed="">Usos</h3>
+      <div class="tags" style="margin-top:14px;">
+        <span data-ed="">Lectura</span>
+        <span data-ed="">Descanso</span>
+        <span data-ed="">Encuentro</span>
+        <span data-ed="">Contemplación</span>
+      </div>
+
+      <div class="note">
+        <span class="mono red" data-ed="">Qué aporta al proyecto de emergencia</span>
+        <p data-ed="">Este ejercicio es el banco de pruebas material de la propuesta de las láminas A-03 y A-04. Aquí se resuelve, a escala de un recinto pequeño, lo que la vivienda de emergencia necesita: una estructura ligera de material local, una unión metálica que la hace montable y desmontable, un apoyo puntual que no exige cimentación corrida y una cubierta independiente del soporte.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         A-03 · VIVIENDA PARA EMERGENCIAS
+         ============================================================ -->
+    <section class="section" id="a03" data-section="">
+      <div class="plate">
+        <div>
+          <div class="plate-code"><span class="tag" data-ed="">A-03</span><span class="mono dim" data-ed="">Análisis normativo</span></div>
+          <h2 class="md" data-ed="">Vivienda para<br>emergencias</h2>
+          <p data-ed="">Lectura del manual de la UNGRD desde la asignatura: qué exige la norma colombiana para formular vivienda después de una declaratoria de desastre o calamidad pública, y dónde queda el espacio de lo efímero dentro de ese proceso.</p>
+        </div>
+        <div class="plate-side">
+          <span class="mono dim" data-ed="">Fuente: UNGRD 2015</span>
+          <span class="mono red" data-ed="">Ley 1523 de 2012</span>
+          <div class="ed-plate-tools" data-plate-tools=""></div>
+        </div>
+      </div>
+
+      <div class="cols">
+        <div class="col">
+          <h4 data-ed="">A quién obliga</h4>
+          <p data-ed="">El manual está dirigido a alcaldías y gobernaciones. Fija los lineamientos jurídicos, técnicos y financieros para formular vivienda nueva —de interés social o prioritario, urbana o rural— cuando un municipio ha declarado desastre o calamidad pública.</p>
+        </div>
+        <div class="col">
+          <h4 data-ed="">Quién paga</h4>
+          <p data-ed="">La competencia se reparte por suelo: el Ministerio de Vivienda con Fonvivienda atiende lo urbano y el Ministerio de Agricultura con el Banco Agrario lo rural. Si ninguno puede responder, el FNGRD financia en todo o en parte, sujeto a disponibilidad.</p>
+        </div>
+        <div class="col">
+          <h4 data-ed="">Quién entra</h4>
+          <p data-ed="">Hay que estar en el censo del CMGRD, habitar la vivienda de forma permanente como propietario o poseedor y transferir el predio desalojado al municipio; su avalúo catastral cuenta como aporte a la vivienda nueva.</p>
+        </div>
+      </div>
+
+      <h3 class="mono" style="margin:clamp(32px,4vw,56px) 0 0;" data-ed="">Ruta de formulación</h3>
+      <div class="route" data-list="step">
+        <div class="step" data-item=""><span class="step-n" data-ed="">01</span><strong data-ed="">Declaratoria</strong><span data-ed="">El municipio o el departamento declara desastre o calamidad pública conforme a la Ley 1523 de 2012.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">02</span><strong data-ed="">Plan de acción</strong><span data-ed="">Artículo 61: define las acciones de recuperación que asume la entidad territorial.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">03</span><strong data-ed="">Censo</strong><span data-ed="">El CMGRD levanta y certifica el censo; se cruza con el RUD y con la base predial del IGAC.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">04</span><strong data-ed="">Focalización</strong><span data-ed="">Validación con los sistemas del MVCT o el MADR hasta obtener el listado definitivo de hogares.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">05</span><strong data-ed="">Diagnóstico</strong><span data-ed="">Localización, entorno, servicios, norma del sector y esquema básico de ocupación de cada predio.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">06</span><strong data-ed="">Prefactibilidad</strong><span data-ed="">Tres análisis en paralelo: jurídico, técnico y financiero, con modelación de costo por unidad.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">07</span><strong data-ed="">Selección</strong><span data-ed="">Gana el lote con mejor calidad de vida para las familias dentro del presupuesto disponible.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">08</span><strong data-ed="">Licencias</strong><span data-ed="">Diseños definitivos, licencias de urbanismo y construcción, y radicación ante el ministerio.</span></div>
+      </div>
+
+      <table class="tbl">
+        <caption data-ed="">Requisitos técnicos mínimos exigidos al proyecto</caption>
+        <thead><tr><th class="num">№</th><th>Variable</th><th>Exigencia</th><th class="end">Referencia</th></tr></thead>
+        <tbody data-rows="techrow">
+          <tr data-item=""><td class="num" data-ed="">01</td><td data-ed="">Programa mínimo</td><td data-ed="">Sala-comedor en espacio múltiple, cocina con mesón y lavaplatos, lavadero, baño con sanitario, lavamanos y ducha, y mínimo dos alcobas. El diseño debe permitir crecimiento posterior.</td><td class="end" data-ed="">Cap. III, 1.2.2</td></tr>
+          <tr data-item="" class="on"><td class="num" data-ed="">02</td><td data-ed="">Prototipo urbano</td><td data-ed="">Vivienda de 6,00 × 7,00 m: 42 m² construidos con dos alcobas, baño, sala, comedor, cocina, patio de ropas y terraza de acceso; aparte, un patio posterior de 3,00 m (18 m²).</td><td class="end" data-ed="">Anexo 4</td></tr>
+          <tr data-item=""><td class="num" data-ed="">03</td><td data-ed="">Prototipo rural</td><td data-ed="">Dos alternativas: 42 m² con dos alcobas, o 52 m² con tres bajo parámetros del Banco Agrario. Cocina, comedor y baño con relación directa al exterior.</td><td class="end" data-ed="">Anexo 4</td></tr>
+          <tr data-item=""><td class="num" data-ed="">04</td><td data-ed="">Ventana-muro</td><td data-ed="">No debe superar el 40 %, calculado como área de vidriado sobre área bruta de muro exterior.</td><td class="end" data-ed="">Medida pasiva i</td></tr>
+          <tr data-item=""><td class="num" data-ed="">05</td><td data-ed="">Altura libre</td><td data-ed="">Mínimo 2,30 m en clima cálido y 2,20 m en clima frío. Todos los espacios con iluminación y ventilación naturales.</td><td class="end" data-ed="">Medidas pasivas iii–iv</td></tr>
+          <tr data-item=""><td class="num" data-ed="">06</td><td data-ed="">Orientación</td><td data-ed="">En clima frío se alarga la edificación sobre el eje este-oeste para captar sol; en clima templado y cálido las fachadas largas van al norte y al sur.</td><td class="end" data-ed="">Medida pasiva ii</td></tr>
+          <tr data-item=""><td class="num" data-ed="">07</td><td data-ed="">Estructura</td><td data-ed="">Diseño sismorresistente según NSR-10. Los sistemas no tradicionales se acogen al capítulo de materiales y métodos alternos de la Ley 400 de 1997.</td><td class="end" data-ed="">NSR-10 / Ley 400</td></tr>
+          <tr data-item=""><td class="num" data-ed="">08</td><td data-ed="">Redes</td><td data-ed="">Hidrosanitarias según RAS 2000, eléctricas según RETIE, telecomunicaciones según NTC-5797 y una salida de gas para estufa con medidor y regulador.</td><td class="end" data-ed="">RAS / RETIE / NTC</td></tr>
+          <tr data-item=""><td class="num" data-ed="">09</td><td data-ed="">Accesibilidad</td><td data-ed="">El proyecto debe garantizar el acceso de personas con movilidad reducida y cumplir las disposiciones de espacio público del municipio.</td><td class="end" data-ed="">Ley 361 / Dec. 1538</td></tr>
+          <tr data-item=""><td class="num" data-ed="">10</td><td data-ed="">Predio</td><td data-ed="">Escritura registrada, certificado de tradición y libertad de menos de 30 días hábiles y avalúo comercial. Nunca en suelo de protección ni en alto riesgo no mitigable.</td><td class="end" data-ed="">Cap. III, 1.2.1</td></tr>
+        </tbody>
+      </table>
+
+      <!-- FIGURA TÉCNICA + LECTURA CRÍTICA -->
+      <div class="figbox">
+        <div class="axo" tabindex="0" aria-label="Axonometría despiezada de un módulo de transición: cubierta, estructura, plataforma y apoyos">
+          <svg viewBox="0 0 470 400" role="img">
+            <g>
+              <line class="ln-dash" x1="140" y1="-10" x2="140" y2="392"></line>
+              <line class="ln-dash" x1="20" y1="52" x2="20" y2="330"></line>
+              <line class="ln-dash" x1="260" y1="52" x2="260" y2="330"></line>
+            </g>
+            <g class="layer" style="--y:0px; --yc:136px">
+              <polygon class="fill-soft ln" points="140,0 260,60 140,120 20,60"></polygon>
+              <line class="ln-soft" x1="20" y1="60" x2="260" y2="60"></line>
+              <line class="ln-soft" x1="140" y1="0" x2="140" y2="120"></line>
+              <text class="lbl" x="300" y="64">01 · Cubierta</text>
+            </g>
+            <g class="layer" style="--y:85px; --yc:170px">
+              <polygon class="ln" points="140,0 260,60 140,120 20,60"></polygon>
+              <polygon class="ln-soft" points="140,-34 260,26 140,86 20,26"></polygon>
+              <line class="ln" x1="20" y1="60" x2="20" y2="26"></line>
+              <line class="ln" x1="260" y1="60" x2="260" y2="26"></line>
+              <line class="ln" x1="140" y1="120" x2="140" y2="86"></line>
+              <line class="ln-soft" x1="140" y1="0" x2="140" y2="-34"></line>
+              <text class="lbl" x="300" y="64">02 · Estructura</text>
+            </g>
+            <g class="layer" style="--y:170px; --yc:170px">
+              <polygon class="fill-soft ln" points="140,0 260,60 140,120 20,60"></polygon>
+              <text class="lbl" x="300" y="64">03 · Plataforma</text>
+            </g>
+            <g class="layer" style="--y:250px; --yc:178px">
+              <polygon class="ln" points="20,53 34,60 20,67 6,60"></polygon>
+              <polygon class="ln" points="140,-7 154,0 140,7 126,0"></polygon>
+              <polygon class="ln" points="260,53 274,60 260,67 246,60"></polygon>
+              <polygon class="ln" points="140,113 154,120 140,127 126,120"></polygon>
+              <text class="lbl" x="300" y="64">04 · Apoyos</text>
+            </g>
+          </svg>
+          <div class="mono dim" style="margin-top:10px;" data-ed="">Fig. 01 — Despiece de montaje · pasa el cursor para plegar</div>
+        </div>
+
+        <div class="note">
+          <span class="mono red" data-ed="">Lectura desde la asignatura</span>
+          <p data-ed="">El manual regula vivienda permanente: reasentamiento definitivo con licencia, escritura y redes conectadas. Entre el día del evento y la entrega de esa vivienda pasan meses o años, y ese intervalo no lo cubre la norma. Ahí trabaja la arquitectura efímera: alojamiento temporal, equipamiento de atención y estructuras de transición que deben resolverse con los mismos criterios de habitabilidad —altura libre, ventilación cruzada, orientación, privacidad— pero con montaje en días y desmontaje sin huella.</p>
+          <p data-ed="">La lámina siguiente responde con una propuesta completa: el puente autoportante de Da Vinci convertido en estructura base de una vivienda modular de guadua, que la comunidad levanta en pocos días y retira sin huella.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         A-04 · PROPUESTA COMPLETA — VIVIENDA DE EMERGENCIA MODULAR
+         Estructura base: el puente autoportante de Da Vinci
+         ============================================================ -->
+    <section class="section" id="a04" data-section="">
+      <div class="plate">
+        <div>
+          <div class="plate-code"><span class="tag" data-ed="">A-04</span><span class="mono dim" data-ed="">Propuesta completa de vivienda de emergencia</span></div>
+          <h2 class="md" data-ed="">Vivienda<br>modular</h2>
+          <p data-ed="">Vivienda transitoria y progresiva para un hogar de cinco personas en zona rural andina de clima cálido. La estructura base es el puente autoportante de Leonardo: pórticos de guadua cada 2,40 m, trabados en nudos recíprocos y sin uniones rígidas, con piel de lona tensada y testeros de esterilla. Crece por vanos, de refugio de 28,8 m² a vivienda de 57,6 m².</p>
+        </div>
+        <div class="plate-side">
+          <span class="mono dim" data-ed="">Guadua · lona · esterilla</span>
+          <span class="mono red" data-ed="">Sin uniones rígidas · amarres reversibles</span>
+          <div class="ed-plate-tools" data-plate-tools=""></div>
+        </div>
+      </div>
+
+      <div class="feature-sub">
+        <span class="mono red" data-ed="">Estructura base: puente autoportante de Da Vinci</span>
+        <span class="mono dim" data-ed="">Grilla 6,00 × 2,40 m</span>
+        <span class="mono dim" data-ed="">Fase 2 · 7,20 × 6,00 m · 43,2 m²</span>
+        <span class="mono dim" data-ed="">Hogar de 5 personas</span>
+        <span class="mono dim" data-ed="">Rural · clima cálido</span>
+        <span class="mono dim" data-ed="">Guadua Ø 11,4 cm (4½")</span>
+      </div>
+
+      <figure class="bleed cover" style="margin-block:0;">
+        <img src="img/vivienda-render-01.jpg" alt="Render exterior de la vivienda: pórticos de guadua con piel de lona blanca y testero de esterilla con puerta y ventana, sobre una plataforma elevada, en un asentamiento de transición en zona de montaña afectada por una emergencia" loading="lazy" decoding="async">
+        <figcaption class="bleed-cap" data-ed="">Render 01 — Testero de acceso</figcaption>
+      </figure>
+
+      <div class="cols">
+        <div class="col">
+          <h4 data-ed="">Diagnóstico</h4>
+          <p data-ed="">Entre el evento y la vivienda definitiva pasan meses o años que la norma no cubre (lámina A-03). Para ese intervalo se propone una vivienda transitoria y progresiva: un hogar de cinco personas, zona rural andina de clima cálido y guadua disponible en la región. No es carpa ni casa definitiva: es un tramo de estructura que se habita desde el primer vano y crece con la familia.</p>
+        </div>
+        <div class="col">
+          <h4 data-ed="">Concepto · el puente se levanta</h4>
+          <p data-ed="">Del puente de Leonardo se toma la lógica, no la forma: piezas rectas que se traban unas con otras sin uniones rígidas. Cada pórtico tiene dos muros a 70° y dos cubiertas a 30°; en el quiebre la correa queda presa entre cubierta y muro, y en la cumbrera las cubiertas se cruzan en tijera. De cada guadua de 6 m salen un muro y una cubierta, siempre iguales.</p>
+        </div>
+        <div class="col">
+          <h4 data-ed="">Piel y testeros</h4>
+          <p data-ed="">La cubierta es una membrana: paños de lona de PVC tensados por vano, como las cubiertas textiles de los grandes recintos, pero con un material de emergencia que se dobla y se transporta. La piel vuela sobre el muro y deja una ranura de ventilación protegida; la cumbrera ventilada saca el aire caliente. Donde hay puertas y ventanas, el muro es de esterilla de guadua.</p>
+        </div>
+      </div>
+
+      <figure class="bleed cover" style="margin-block:clamp(36px,5vw,72px) 0;">
+        <img src="img/vivienda-render-02.jpg" alt="Render exterior del costado: tres vanos de lona tensada entre pórticos de guadua cuyas puntas sobresalen de la piel, testero posterior de esterilla con dos ventanas y una familia sentada en el borde de la plataforma" loading="lazy" decoding="async">
+        <figcaption class="bleed-cap" data-ed="">Render 02 — Costado y testero posterior · fase 2</figcaption>
+      </figure>
+
+      <div class="trio">
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/modelo-01-testero-acceso.jpg" alt="Vista del modelo 3D: testero de acceso con puerta y ventana, muros inclinados y cubierta a dos aguas con las puntas de guadua sobresaliendo" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Modelo 3D — testero de acceso</span><span data-ed="">Vista 01</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/modelo-02-costado.jpg" alt="Vista lateral del modelo 3D: tres vanos, paños de cubierta que vuelan sobre los paños de muro y correas en el alero y la cumbrera" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Modelo 3D — costado, tres vanos</span><span data-ed="">Vista 02</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/modelo-03-testero-posterior.jpg" alt="Vista del modelo 3D desde atrás: testero posterior con dos ventanas y costado con los paños de cubierta como aleros" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Modelo 3D — testero posterior</span><span data-ed="">Vista 03</span></figcaption>
+        </figure>
+      </div>
+
+      <h3 class="mono" style="margin:clamp(40px,5vw,72px) 0 0;" data-ed="">Esquemas de proyecto · E-01 a E-05</h3>
+      <p class="lede" data-ed="">Cinco láminas de diagnóstico y diseño, dibujadas sobre la grilla y el perfil del modelo. Haz clic en cualquiera para abrirla a resolución completa.</p>
+      <div class="sheets">
+        <figure class="plate-img" style="margin:0;">
+          <a href="img/esquemas/E-01_circulacion-permanencia.png" target="_blank" rel="noopener"><img src="img/esquemas/E-01_circulacion-permanencia.png" alt="Esquema E-01, circulación y permanencia: planta de la fase 2 con el eje de circulación por la franja alta del centro, permanencias en los bordes bajos y sección tipo como llave de lectura" loading="lazy" decoding="async"></a>
+          <figcaption><span data-ed="">E-01 — Circulación · permanencia: se circula por el centro, se permanece en los bordes</span><span class="go">Abrir ↗</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <a href="img/esquemas/E-02_zonificacion-programa.png" target="_blank" rel="noopener"><img src="img/esquemas/E-02_zonificacion-programa.png" alt="Esquema E-02, zonificación y programa: zonas social, húmeda y privada de la fase 2, cuadro de áreas de 43,2 m², verificación normativa y crecimiento de 2 a 4 vanos" loading="lazy" decoding="async"></a>
+          <figcaption><span data-ed="">E-02 — Zonificación · programa: 43,2 m² y banda húmeda continua</span><span class="go">Abrir ↗</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <a href="img/esquemas/E-03_publico-privado.png" target="_blank" rel="noopener"><img src="img/esquemas/E-03_publico-privado.png" alt="Esquema E-03, público y privado: gradiente de intimidad desde el espacio comunitario hasta las alcobas, con cuatro umbrales numerados" loading="lazy" decoding="async"></a>
+          <figcaption><span data-ed="">E-03 — Público · privado: profundidad = intimidad</span><span class="go">Abrir ↗</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <a href="img/esquemas/E-04_estructura-grilla.png" target="_blank" rel="noopener"><img src="img/esquemas/E-04_estructura-grilla.png" alt="Esquema E-04, estructura: planta de la grilla de 6,00 por 2,40 m con pórticos, correas, riostras y dados; pórtico tipo con nudos recíprocos; despiece de una guadua de 6 m y detalle del nudo del quiebre" loading="lazy" decoding="async"></a>
+          <figcaption><span data-ed="">E-04 — Estructura: grilla 6,00 × 2,40 y pórtico de nudos recíprocos</span><span class="go">Abrir ↗</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <a href="img/esquemas/E-05_corte-espacialidad-cubierta.png" target="_blank" rel="noopener"><img src="img/esquemas/E-05_corte-espacialidad-cubierta.png" alt="Esquema E-05, corte: sección transversal con franjas de altura y usos, ventilación por el alero y la cumbrera, lluvia y sol; corte longitudinal por la cumbrera; piel y capas de la cubierta" loading="lazy" decoding="async"></a>
+          <figcaption><span data-ed="">E-05 — Corte: la altura decide el uso; el aire entra por el alero y sale por la cumbrera</span><span class="go">Abrir ↗</span></figcaption>
+        </figure>
+      </div>
+
+      <h3 class="mono" style="margin:clamp(40px,5vw,72px) 0 0;" data-ed="">Crecimiento por vanos · la misma pieza, el mismo nudo</h3>
+      <div class="route route-3" data-list="step">
+        <div class="step" data-item=""><span class="step-n" data-ed="">28,8</span><strong data-ed="">Fase 1 · Refugio · 2 vanos</strong><span data-ed="">4,80 × 6,00 m. Cumple el mínimo humanitario: 5 personas × 3,5 m² = 17,5 m². Cocina en el porche y saneamiento comunal.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">43,2</span><strong data-ed="">Fase 2 · Transición · 3 vanos</strong><span data-ed="">7,20 × 6,00 m. Programa del manual de la UNGRD: sala-comedor, cocina, baño, lavadero y dos alcobas, con el núcleo húmedo en una sola banda.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">57,6</span><strong data-ed="">Fase 3 · Crecimiento · 4 vanos</strong><span data-ed="">9,60 × 6,00 m. Supera el prototipo rural de 52 m² con tres alcobas; el cuarto vano también puede ser espacio productivo.</span></div>
+      </div>
+
+      <h3 class="mono" style="margin:clamp(32px,4vw,56px) 0 0;" data-ed="">Ritmo · repetición · modulación</h3>
+      <div class="route route-3" data-list="step">
+        <div class="step" data-item=""><span class="step-n" data-ed="">01</span><strong data-ed="">Pieza</strong><span data-ed="">Una guadua de 6 m da un muro de 2,50 m y una cubierta de 3,50 m. Todas se cortan y se marcan igual con una plantilla.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">02</span><strong data-ed="">Nudo</strong><span data-ed="">La correa queda presa entre la cubierta y el muro; un amarre de cabuya o zuncho por cruce. Ninguna unión es rígida.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">03</span><strong data-ed="">Pórtico</strong><span data-ed="">Cuatro piezas y la tijera de cumbrera. Con los pies a 6,00 m y las marcas respetadas, cierra solo en 70° y 30°.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">04</span><strong data-ed="">Ritmo</strong><span data-ed="">Un pórtico cada 2,40 m: cada vano es un paño de lona, un recinto y una etapa de obra.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">05</span><strong data-ed="">Repetición</strong><span data-ed="">Correas de 3,00 m traslapadas sobre cada pórtico enlazan la serie; riostras en X en los vanos extremos.</span></div>
+        <div class="step" data-item=""><span class="step-n" data-ed="">06</span><strong data-ed="">Modulación</strong><span data-ed="">Dos, tres o cuatro vanos según el hogar; agrupadas por sus porches, las viviendas arman el asentamiento sin rediseñar nada.</span></div>
+      </div>
+
+      <table class="tbl">
+        <caption data-ed="">Montaje — del paquete de guaduas a la vivienda levantada</caption>
+        <thead><tr><th class="num">№</th><th>Operación</th><th>En qué consiste</th><th class="end">Nota</th></tr></thead>
+        <tbody data-rows="usorow">
+          <tr data-item=""><td class="num" data-ed="">01</td><td data-ed="">Replanteo</td><td data-ed="">Estacas y cuerda: grilla de 6,00 × 2,40 m y dados de 30 × 30 cm cada 3,00 m.</td><td class="end" data-ed="">Cuerda y nivel</td></tr>
+          <tr data-item=""><td class="num" data-ed="">02</td><td data-ed="">Plataforma</td><td data-ed="">Vigas de guadua sobre los dados, tensores en cada eje de pórtico, viguetas cada 0,60 m y piso a +0,50 m.</td><td class="end" data-ed="">+0,50</td></tr>
+          <tr data-item=""><td class="num" data-ed="">03</td><td data-ed="">Marcado</td><td data-ed="">Todas las guaduas se cortan en 2,50 + 3,50 m y se marcan con la misma plantilla: amarre, correa y tijera.</td><td class="end" data-ed="">Plantilla</td></tr>
+          <tr data-item="" class="on"><td class="num" data-ed="">04</td><td data-ed="">Pórtico</td><td data-ed="">Se arma en el piso: cubiertas cruzadas en tijera, correa de quiebre presa entre cubierta y muro, un amarre en cada cruce.</td><td class="end" data-ed="">Clave</td></tr>
+          <tr data-item=""><td class="num" data-ed="">05</td><td data-ed="">Izado</td><td data-ed="">El pórtico se levanta a mano y los pies calzan en las botas de la viga de borde, que trabaja como tensor.</td><td class="end" data-ed="">4 personas</td></tr>
+          <tr data-item=""><td class="num" data-ed="">06</td><td data-ed="">Correas</td><td data-ed="">Cumbrera, quiebre y alero: piezas de 3,00 m traslapadas 0,30 m sobre cada pórtico; riostras en X en los vanos extremos.</td><td class="end" data-ed="">Por vano</td></tr>
+          <tr data-item=""><td class="num" data-ed="">07</td><td data-ed="">Piel</td><td data-ed="">Paños de lona por vano, de la cumbrera al alero; paños de muro enrollables; caballete ventilado sobre la cumbrera.</td><td class="end" data-ed="">Tensado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">08</td><td data-ed="">Testeros</td><td data-ed="">Bastidor de guadua con esterilla: puertas y ventanas siempre en muro de bambú.</td><td class="end" data-ed="">Esterilla</td></tr>
+          <tr data-item=""><td class="num" data-ed="">09</td><td data-ed="">Desmontaje</td><td data-ed="">Orden inverso. Las piezas salen enteras y vuelven a servir en otro montaje o en la vivienda definitiva.</td><td class="end" data-ed="">Reversible</td></tr>
+        </tbody>
+      </table>
+
+      <table class="tbl keep-end">
+        <caption data-ed="">Verificación normativa · fase 2</caption>
+        <thead><tr><th class="num">№</th><th>Criterio</th><th>Propuesta</th><th class="end">Estado</th></tr></thead>
+        <tbody data-rows="techrow">
+          <tr data-item=""><td class="num" data-ed="">01</td><td data-ed="">Programa mínimo · UNGRD</td><td data-ed="">Sala-comedor, cocina con mesón y lavaplatos, baño completo, lavadero en el patio y dos alcobas. Crecimiento posterior por vanos.</td><td class="end st-ok" data-ed="">Cumple</td></tr>
+          <tr data-item=""><td class="num" data-ed="">02</td><td data-ed="">Área · UNGRD, prototipo de 42 m²</td><td data-ed="">43,2 m² en la fase 2 y 57,6 m² en la fase 3, por encima de los 52 m² del prototipo rural de tres alcobas.</td><td class="end st-ok" data-ed="">Cumple</td></tr>
+          <tr data-item=""><td class="num" data-ed="">03</td><td data-ed="">Área por persona · ACNUR / Esfera</td><td data-ed="">3,5 m² × 5 personas = 17,5 m². La fase 1 ya ofrece 28,8 m², de los cuales 23,0 m² tienen más de 1,50 m de altura.</td><td class="end st-ok" data-ed="">Cumple</td></tr>
+          <tr data-item=""><td class="num" data-ed="">04</td><td data-ed="">Altura libre · UNGRD, 2,30 m en clima cálido</td><td data-ed="">2,30 m en la franja central de 2,27 m, donde se circula y se está de pie; 2,96 m en la cumbrera. Los bordes bajos alojan camas, bancas y guardado.</td><td class="end st-warn" data-ed="">Parcial</td></tr>
+          <tr data-item=""><td class="num" data-ed="">05</td><td data-ed="">Altura · ACNUR, 2 m en el punto más bajo</td><td data-ed="">2,00 m en una franja de 3,31 m. Como en la carpa familiar de ACNUR —1,80 m en los costados y 2,75 m al centro—, los lados quedan más bajos que el eje.</td><td class="end st-warn" data-ed="">Parcial</td></tr>
+          <tr data-item=""><td class="num" data-ed="">06</td><td data-ed="">Relación ventana-muro ≤ 40 % · UNGRD</td><td data-ed="">Testero de acceso: puerta y una ventana (≈ 8 % de vidrio). Testero posterior: dos ventanas (≈ 16 %).</td><td class="end st-ok" data-ed="">Cumple</td></tr>
+          <tr data-item=""><td class="num" data-ed="">07</td><td data-ed="">Iluminación y ventilación naturales · UNGRD</td><td data-ed="">Ranura continua en ambos aleros, cumbrera ventilada, ventanas en los testeros y paños de muro enrollables.</td><td class="end st-ok" data-ed="">Cumple</td></tr>
+          <tr data-item=""><td class="num" data-ed="">08</td><td data-ed="">Estructura · NSR-10, Título G (cap. G.12)</td><td data-ed="">Guadua angustifolia preservada y seca (NTC 5301), un piso. Las uniones por amarre requieren cálculo y ensayo antes de construir.</td><td class="end st-warn" data-ed="">Por verificar</td></tr>
+          <tr data-item=""><td class="num" data-ed="">09</td><td data-ed="">Protección del material</td><td data-ed="">Guadua a 0,50 m del suelo sobre dados, siempre bajo la piel; el faldón de la lona gotea fuera del dado, sobre una cuneta de grava.</td><td class="end st-ok" data-ed="">Cumple</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="mono" style="margin:clamp(40px,5vw,72px) 0 0;" data-ed="">Maqueta de estudio · el principio del puente</h3>
+      <p class="lede" data-ed="">La maqueta en balso comprobó el principio: piezas rectas que se sostienen trabándose unas con otras, sin clavos ni pegante. En escala real, con guadua, lluvia y viento, el pórtico se simplifica a cuatro piezas y tres tipos de nudo, y cada cruce lleva un amarre que se desarma sin dañar la pieza.</p>
+
+      <figure class="bleed" style="margin-block:14px 0;">
+        <img src="img/maqueta-01-portico.jpg" alt="Maqueta en balso del pórtico autoportante: piezas rectas cruzadas que forman un arco sin clavos ni pegante" loading="lazy" decoding="async">
+        <figcaption class="bleed-cap" data-ed="">Maqueta 01 — Pórtico autoportante</figcaption>
+      </figure>
+
+      <div class="gallery">
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/maqueta-02-perspectiva.jpg" alt="Vista en perspectiva del módulo mostrando dos pórticos enlazados" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Perspectiva del módulo</span><span data-ed="">Maqueta 02</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/maqueta-03-alzado.jpg" alt="Alzado frontal del pórtico autoportante" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Alzado frontal — pórtico</span><span data-ed="">Maqueta 03</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/maqueta-04-planta.jpg" alt="Vista superior del entramado que enlaza los pórticos" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Planta del entramado</span><span data-ed="">Maqueta 04</span></figcaption>
+        </figure>
+        <figure class="plate-img" style="margin:0;">
+          <img src="img/maqueta-05-longitudinal.jpg" alt="Vista longitudinal donde se aprecia la repetición de pórticos" loading="lazy" decoding="async">
+          <figcaption><span data-ed="">Longitudinal — repetición</span><span data-ed="">Maqueta 05</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="note">
+        <span class="mono red" data-ed="">Qué resuelve</span>
+        <p data-ed="">La vivienda cubre el intervalo que deja abierto la lámina A-03: desde el día del evento hasta la entrega de la vivienda definitiva. Se levanta con mano de obra de la comunidad y una sola guadua cortada siempre igual; cumple el área y el programa del manual en su fase 2 y deja explícito lo que falta verificar: la altura en los bordes y el cálculo de las uniones. Cuando llega el reasentamiento, se desmonta sin huella y sus guaduas vuelven a servir. La lámina A-05 reúne los referentes teóricos que sustentan cada decisión.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         A-05 · REFERENTES TEÓRICOS
+         ============================================================ -->
+    <section class="section" id="a05" data-section="">
+      <div class="plate">
+        <div>
+          <div class="plate-code"><span class="tag" data-ed="">A-05</span><span class="mono dim" data-ed="">Sustento de la propuesta</span></div>
+          <h2 class="md" data-ed="">Referentes<br>teóricos</h2>
+          <p data-ed="">De dónde viene cada decisión de la vivienda modular de la lámina A-04. Tres frentes: el sistema estructural que se adopta, la doctrina de la vivienda post-desastre que fija qué debe hacer un alojamiento temporal, y la tesis de que quien habita es quien construye.</p>
+        </div>
+        <div class="plate-side">
+          <span class="mono dim" data-ed="">08 referentes</span>
+          <span class="mono red" data-ed="">Sistema · Emergencia · Habitante</span>
+          <div class="ed-plate-tools" data-plate-tools=""></div>
+        </div>
+      </div>
+
+      <div class="refs" data-list="ref">
+
+        <article class="ref" data-item="">
+          <span class="ref-n" data-ed="">01</span>
+          <div>
+            <div class="ref-head">
+              <span class="ref-tag" data-ed="">Sistema</span>
+              <h4 data-ed="">Leonardo da Vinci</h4>
+              <span class="ref-work" data-ed="">Puente autoportante, Códice Atlántico</span>
+            </div>
+            <p data-ed="">Piezas rectas iguales que se cruzan y se traban entre sí por fricción y peso propio, sin clavos, cuerdas ni pegante. La estructura se arma en campo con la madera que haya, se sostiene sola y se desarma igual de rápido; cuanta más carga recibe, más se aprietan los encuentros.</p>
+            <span class="ref-use" data-ed="">Es el principio estructural que adopta el módulo: el puente deja de cruzar, se levanta y se convierte en pórtico habitable.</span>
+          </div>
+        </article>
+
+        <article class="ref" data-item="">
+          <span class="ref-n" data-ed="">02</span>
+          <div>
+            <div class="ref-head">
+              <span class="ref-tag" data-ed="">Sistema</span>
+              <h4 data-ed="">Jean Prouvé</h4>
+              <span class="ref-work" data-ed="">Maisons démontables 6×6, 1944</span>
+            </div>
+            <p data-ed="">Casas desmontables encargadas por el gobierno francés para los damnificados de la guerra en Lorena y el Franco Condado. Un pórtico axial patentado —no los muros— sostiene la casa; el Ministerio de la Reconstrucción fijó 36 m² por unidad, ampliados después a 54 m², y la vivienda quedaba habitable el mismo día del montaje.</p>
+            <span class="ref-use" data-ed="">Antecedente directo de resolver una vivienda de emergencia con un solo pórtico repetido, y prueba de que la medida mínima y el montaje en un día son compatibles.</span>
+          </div>
+        </article>
+
+        <article class="ref" data-item="">
+          <span class="ref-n" data-ed="">03</span>
+          <div>
+            <div class="ref-head">
+              <span class="ref-tag" data-ed="">Sistema</span>
+              <h4 data-ed="">Simón Vélez</h4>
+              <span class="ref-work" data-ed="">Construcción en guadua, Colombia</span>
+            </div>
+            <p data-ed="">Su aporte decisivo no es una forma sino una unión: rellenar con mortero de cemento el entrenudo de la caña justo donde llega la conexión, atravesado por acero. Eso permite trabajar la guadua a tracción —no solo a compresión— y resolver voladizos que antes eran imposibles.</p>
+            <span class="ref-use" data-ed="">Marco técnico para que una estructura de guadua sea viable en Colombia, y punto de partida de las platinas con pernos del habitáculo de la lámina A-02.</span>
+          </div>
+        </article>
+
+        <article class="ref" data-item="">
+          <span class="ref-n" data-ed="">04</span>
+          <div>
+            <div class="ref-head">
+              <span class="ref-tag" data-ed="">Emergencia</span>
+              <h4 data-ed="">Ian Davis</h4>
+              <span class="ref-work" data-ed="">Shelter After Disaster, 1978 · guía UNDRO, 1982 (2.ª ed. 2015)</span>
+            </div>
+            <p data-ed="">El texto fundacional del alojamiento post-desastre. Sostiene que el recurso principal es la iniciativa del propio damnificado: en los desastres estudiados, los materiales locales y de rescate permitieron reconstruir cerca de tres cuartas partes de la vivienda dañada, mientras que los organismos externos aportaron alrededor del 20 % de la respuesta. Advierte que la vivienda prefabricada importada es cara, suele volverse permanente y desplaza esa capacidad.</p>
+            <span class="ref-use" data-ed="">Justifica que el módulo no se fabrique fuera y se despache armado, sino que se replantee y se levante en el sitio con mano de obra de la comunidad.</span>
+          </div>
+        </article>
+
+        <article class="ref" data-item="">
+          <span class="ref-n" data-ed="">05</span>
+          <div>
+            <div class="ref-head">
+              <span class="ref-tag" data-ed="">Emergencia</span>
+              <h4 data-ed="">Proyecto Esfera</h4>
+              <span class="ref-work" data-ed="">Carta Humanitaria y normas mínimas para la respuesta humanitaria</span>
+            </div>
+            <p data-ed="">Fija el mínimo internacional de 3,5 m² de espacio cubierto por persona, alcanzable de forma progresiva y ajustable a la norma de alojamiento de la población afectada. En climas fríos advierte que esa superficie es difícil de calentar cuando escasea el combustible, y que construir con madera puede presionar el bosque local.</p>
+            <span class="ref-use" data-ed="">Es el piso cuantitativo contra el que se contrasta el prototipo de 42 m² del manual de la UNGRD: la norma colombiana queda holgadamente por encima del mínimo humanitario.</span>
+          </div>
+        </article>
+
+        <article class="ref" data-item="">
+          <span class="ref-n" data-ed="">06</span>
+          <div>
+            <div class="ref-head">
+              <span class="ref-tag" data-ed="">Emergencia</span>
+              <h4 data-ed="">Shigeru Ban</h4>
+              <span class="ref-work" data-ed="">Paper Log House, Kobe, 1995</span>
+            </div>
+            <p data-ed="">Alojamiento para los damnificados del terremoto de Hanshin. Cimiento de cajas de cerveza donadas y rellenas de arena, muros de tubos de cartón de 106 mm de diámetro y 4 mm de espesor sellados entre sí, cubierta de lona. Menos de 2.000 dólares por unidad en materiales, montaje al alcance de casi cualquiera y desmontaje con material reciclable.</p>
+            <span class="ref-use" data-ed="">Demuestra que lo temporal no está reñido ni con la dignidad ni con el detalle constructivo: el cimiento sin excavación y el montaje sin oficio son la misma estrategia del módulo.</span>
+          </div>
+        </article>
+
+        <article class="ref" data-item="">
+          <span class="ref-n" data-ed="">07</span>
+          <div>
+            <div class="ref-head">
+              <span class="ref-tag" data-ed="">Habitante</span>
+              <h4 data-ed="">John F. C. Turner</h4>
+              <span class="ref-work" data-ed="">Freedom to Build, 1972 · Housing by People, 1976</span>
+            </div>
+            <p data-ed="">A partir de su trabajo en las barriadas de Arequipa y Lima entre 1957 y 1965, Turner desplaza el valor de la vivienda del objeto al proceso: lo que importa no es qué es la vivienda, sino qué hace por quien la habita y cuánto control tiene esa persona sobre cómo se produce.</p>
+            <span class="ref-use" data-ed="">Da sustento teórico a que el módulo lo levante la propia comunidad y a que crezca por decisión del hogar, no del proyectista.</span>
+          </div>
+        </article>
+
+        <article class="ref" data-item="">
+          <span class="ref-n" data-ed="">08</span>
+          <div>
+            <div class="ref-head">
+              <span class="ref-tag" data-ed="">Habitante</span>
+              <h4 data-ed="">Alejandro Aravena · ELEMENTAL</h4>
+              <span class="ref-work" data-ed="">Quinta Monroy, Iquique, 2001–2004</span>
+            </div>
+            <p data-ed="">93 familias, un subsidio de 7.500 dólares por familia y una decisión de proyecto: en vez de entregar una casa pequeña completa, entregar la mitad de una casa buena. Se construyen 36 m² —la mitad difícil, la que exige técnica— y la familia amplía hasta unos 70 m² por su cuenta, con acompañamiento técnico.</p>
+            <span class="ref-use" data-ed="">Convierte la falta de presupuesto en estrategia de crecimiento, que es justo lo que pide el manual de la UNGRD al exigir que el diseño permita crecimiento posterior, y lo que resuelve la modulación por vanos de la lámina A-04.</span>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="note">
+        <span class="mono red" data-ed="">Síntesis</span>
+        <p data-ed="">Los tres frentes convergen en una misma conclusión: en emergencia no sobra el proyecto, sobra el objeto terminado. Da Vinci y Prouvé aportan un sistema que una comunidad puede armar; Davis, Esfera y Ban fijan qué debe cumplir y con qué economía; Turner y Aravena establecen quién decide. La vivienda modular de la lámina A-04 es el intento de sostener las tres cosas a la vez con una sola guadua, cortada y marcada siempre igual.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         A-06 · BITÁCORA
+         ============================================================ -->
+    <section class="section" id="a06" data-section="">
+      <div class="plate">
+        <div>
+          <div class="plate-code"><span class="tag" data-ed="">A-06</span><span class="mono dim" data-ed="">Seguimiento semanal</span></div>
+          <h2 class="md" data-ed="">Bitácora</h2>
+          <p data-ed="">Registro del avance del semestre. La fila marcada en negro es la sesión en curso.</p>
+        </div>
+        <div class="plate-side">
+          <span class="mono dim" data-ed="">Electiva 3 · Momento 10</span>
+          <div class="ed-plate-tools" data-plate-tools=""></div>
+        </div>
+      </div>
+
+      <table class="tbl">
+        <thead><tr><th class="num">Sem.</th><th>Sesión</th><th>Entrega</th><th class="end">Estado</th></tr></thead>
+        <tbody data-rows="logrow">
+          <tr data-item=""><td class="num" data-ed="">01</td><td data-ed="">Encuadre — qué hace efímera a una arquitectura</td><td data-ed="">Ensayo corto, 2 páginas</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">02</td><td data-ed="">Referentes de arquitectura desmontable</td><td data-ed="">Láminas de análisis</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">03</td><td data-ed="">Stand comercial — perfil de usuario y gag visual</td><td data-ed="">Esquemas y maqueta de estudio</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">04</td><td data-ed="">RUTAS — planta, isométricos y render</td><td data-ed="">Plancha 01 · 14/08/2026</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">05</td><td data-ed="">Habitáculo — guadua, piedra y metal</td><td data-ed="">Plancha 01 · 21/08/2026</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">06</td><td data-ed="">Marco normativo de vivienda en emergencia</td><td data-ed="">Ficha del manual UNGRD</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">07</td><td data-ed="">Vivienda modular — estructura autoportante en balso</td><td data-ed="">Fotografías y despiece · 07/09/2026</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">08</td><td data-ed="">Referentes teóricos de la propuesta</td><td data-ed="">Fichas de sustento en la página</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">09</td><td data-ed="">Cubierta con material del sitio</td><td data-ed="">Prototipo de cerramiento</td><td class="end" data-ed="">Resuelto en A-04</td></tr>
+          <tr data-item=""><td class="num" data-ed="">10</td><td data-ed="">Diagnóstico y esquemas de proyecto</td><td data-ed="">E-01 a E-05: circulación, zonificación, público-privado, estructura y corte</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item=""><td class="num" data-ed="">11</td><td data-ed="">Modelo 3D y renders exteriores</td><td data-ed="">Tres vistas del modelo y dos renders</td><td class="end" data-ed="">Entregado</td></tr>
+          <tr data-item="" class="on"><td class="num" data-ed="">12</td><td data-ed="">Propuesta completa en el espacio web</td><td data-ed="">Lámina A-04 publicada · 23/11/2026</td><td class="end" data-ed="">En curso</td></tr>
+          
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <!-- ---------- PIE ---------- -->
+  <footer class="foot wrap">
+    <div class="foot-in">
+      <div>
+        <span class="mono" data-ed="">Repositorio académico · Arquitectura Efímera</span>
+        <p data-ed="">Documento base: Manual para la formulación de proyectos de vivienda en el marco de declaratorias de desastre o calamidad pública. UNGRD, Bogotá D.C., diciembre de 2015. La síntesis normativa de este sitio es propia; para efectos oficiales rige el documento original. Los dibujos y el render de RUTAS pertenecen a la plancha 01 de la asignatura. Modelo 3D y esquemas E-01 a E-05 de la vivienda: elaboración propia; renders a partir del modelo.</p>
+      </div>
+      <span class="mono dim" data-ed="">Bogotá D.C. · 2026</span>
+    </div>
+    <div class="foot-word" data-ed="">efimero</div>
+  </footer>
+
+</div><!-- /#content -->
+
+<!-- ============================================================
+     BARRA FLOTANTE (sólo en modo edición)
+     ============================================================ -->
+<div class="dock" role="toolbar" aria-label="Acciones de edición">
+  <span class="dock-state" id="dockState">Sin cambios</span>
+  <span class="sep"></span>
+  <button class="dock-btn primary" id="saveBtn">Guardar</button>
+  <button class="dock-btn" id="exportBtn">Exportar HTML</button>
+  <button class="dock-btn" id="resetBtn">Restablecer</button>
+  <span class="sep"></span>
+  <button class="dock-btn" id="exitBtn">Salir</button>
+</div>
+
+<!-- ============================================================
+     VENTANA DE ACCESO
+     ============================================================ -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <span class="mono red">Acceso restringido</span>
+    <h3 id="modalTitle">Modo edición</h3>
+    <p>Introduce la clave para desbloquear la edición del repositorio. Los cambios se guardan en este navegador.</p>
+    <input type="password" id="pinInput" placeholder="••••••••" autocomplete="off" aria-label="Clave de acceso">
+    <p class="modal-err" id="pinErr" role="alert"></p>
+    <div class="modal-actions">
+      <button class="dock-btn primary" id="pinOk">Entrar</button>
+      <button class="dock-btn" id="pinCancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="imgInput" accept="image/*" hidden="">
+
+<!-- ============================================================
+     PLANTILLAS (fuera de #content: no se guardan como contenido)
+     ============================================================ -->
+<template id="tpl-project">
+  <article class="card" data-item="">
+    <div class="frame" data-frame="">
+      <div class="frame-ph">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16"></rect><path d="m3 16 5-5 4 4 3-3 6 6"></path><circle cx="8.5" cy="9" r="1.4"></circle></svg>
+        <span class="mono dim">Render / fotografía</span>
+      </div>
+      <img alt="" hidden="">
+    </div>
+    <div class="card-body">
+      <h3 data-ed="">Nuevo proyecto</h3>
+      <p data-ed="">Describe el encargo, el sistema constructivo y la lógica de montaje y desmontaje.</p>
+      <dl class="spec">
+        <div><dt>Lugar</dt><dd data-ed="">—</dd></div>
+        <div><dt>Área</dt><dd data-ed="">— m²</dd></div>
+        <div><dt>Sistema</dt><dd data-ed="">—</dd></div>
+        <div><dt>Montaje</dt><dd data-ed="">—</dd></div>
+      </dl>
+    </div>
+  </article>
+</template>
+
+<template id="tpl-step">
+  <div class="step" data-item="">
+    <span class="step-n" data-ed="">00</span>
+    <strong data-ed="">Nuevo paso</strong>
+    <span data-ed="">Describe la actuación y quién la ejecuta.</span>
+  </div>
+</template>
+
+<template id="tpl-block">
+  <div class="prose" data-item="" style="margin-top:32px;">
+    <h3 data-ed="">Nuevo bloque</h3>
+    <p data-ed="">Escribe aquí el texto. Puedes añadir tantos bloques como necesites dentro de la lámina.</p>
+  </div>
+</template>
+
+<template id="tpl-specrow">
+  <table><tbody><tr data-item="">
+    <td class="num" data-ed="">00</td>
+    <td data-ed="">Espacio</td>
+    <td data-ed="">Función que cumple dentro del stand.</td>
+    <td class="end" data-ed="">— m²</td>
+  </tr></tbody></table>
+</template>
+
+<template id="tpl-techrow">
+  <table><tbody><tr data-item="">
+    <td class="num" data-ed="">00</td>
+    <td data-ed="">Nueva variable</td>
+    <td data-ed="">Descripción de la exigencia normativa.</td>
+    <td class="end" data-ed="">Referencia</td>
+  </tr></tbody></table>
+</template>
+
+<template id="tpl-usorow">
+  <table><tbody><tr data-item="">
+    <td class="num" data-ed="">00</td>
+    <td data-ed="">Operación</td>
+    <td data-ed="">En qué consiste este paso del montaje.</td>
+    <td class="end" data-ed="">—</td>
+  </tr></tbody></table>
+</template>
+
+<template id="tpl-logrow">
+  <table><tbody><tr data-item="">
+    <td class="num" data-ed="">00</td>
+    <td data-ed="">Tema de la sesión</td>
+    <td data-ed="">Qué se entrega</td>
+    <td class="end" data-ed="">Pendiente</td>
+  </tr></tbody></table>
+</template>
+
+<template id="tpl-ref">
+  <article class="ref" data-item="">
+    <span class="ref-n" data-ed="">00</span>
+    <div>
+      <div class="ref-head">
+        <span class="ref-tag" data-ed="">Frente</span>
+        <h4 data-ed="">Autor</h4>
+        <span class="ref-work" data-ed="">Obra o texto, año</span>
+      </div>
+      <p data-ed="">Qué dice o qué resuelve el referente.</p>
+      <span class="ref-use" data-ed="">Qué le aporta en concreto a la propuesta de vivienda de emergencia.</span>
+    </div>
+  </article>
+</template>
+
+<template id="tpl-section">
+  <section class="section" data-section="">
+    <div class="plate">
+      <div>
+        <div class="plate-code"><span class="tag" data-ed="" data-code="">A-00</span><span class="mono dim" data-ed="">Nueva lámina</span></div>
+        <h2 class="md" data-ed="">Título</h2>
+        <p data-ed="">Describe brevemente qué reúne esta lámina y con qué criterio se ordenó el material.</p>
+      </div>
+      <div class="plate-side">
+        <span class="mono dim" data-ed="">—</span>
+        <div class="ed-plate-tools" data-plate-tools=""></div>
+      </div>
+    </div>
+    <div class="grid-projects" data-list="project"></div>
+  </section>
+</template>
+
+<script>
+/* ============================================================
+   LÓGICA DEL REPOSITORIO
+   1. Acceso por clave      2. Edición en pantalla
+   3. Añadir / quitar       4. Guardar en localStorage
+   5. Exportar HTML         6. Restablecer
+   ============================================================ */
+(function(){
+  "use strict";
+
+  var PIN       = "admin123";               // Clave del modo edición
+  var STORE_KEY = "arq-efimera-repo-v4";        // nueva versión: no reusa lo guardado antes
+
+  var body      = document.body;
+  var content   = document.getElementById("content");
+  var sections  = document.getElementById("sections");
+  var modal     = document.getElementById("modal");
+  var pinInput  = document.getElementById("pinInput");
+  var pinErr    = document.getElementById("pinErr");
+  var toastEl   = document.getElementById("toast");
+  var dockState = document.getElementById("dockState");
+  var lockLabel = document.getElementById("lockLabel");
+  var imgInput  = document.getElementById("imgInput");
+
+  var editing = false, dirty = false;
+  var memoryStore = null, targetFrame = null;
+  var ORIGINAL = content.innerHTML;         // Copia limpia para "Restablecer"
+
+  /* ---------- Almacenamiento (con respaldo en memoria) ---------- */
+  function storageGet(){
+    try{ var v = window.localStorage.getItem(STORE_KEY); return v !== null ? v : memoryStore; }
+    catch(e){ return memoryStore; }
+  }
+  function storageSet(value){
+    memoryStore = value;
+    try{ window.localStorage.setItem(STORE_KEY, value); return "disk"; }
+    catch(e){ return (e && e.name === "QuotaExceededError") ? "quota" : "memory"; }
+  }
+  function storageClear(){
+    memoryStore = null;
+    try{ window.localStorage.removeItem(STORE_KEY); }catch(e){}
+  }
+
+  /* ---------- Avisos ---------- */
+  var toastTimer;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+  }
+  function setDirty(state){
+    dirty = state;
+    dockState.textContent = state ? "Sin guardar" : "Sin cambios";
+  }
+
+  /* ---------- Plantillas ---------- */
+  function cloneTpl(name){
+    var tpl = document.getElementById("tpl-" + name);
+    if(!tpl) return null;
+    var node = tpl.content.querySelector("[data-item]") || tpl.content.firstElementChild;
+    return node ? node.cloneNode(true) : null;
+  }
+
+  /* ---------- Construcción de controles ---------- */
+  function makeBtn(label, title, cls){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "ed-ctl ed-btn " + (cls || "");
+    b.textContent = label; b.title = title; b.setAttribute("aria-label", title);
+    return b;
+  }
+
+  function buildControls(){
+    /* Quitar pieza */
+    content.querySelectorAll("[data-item]").forEach(function(item){
+      if(item.tagName === "TR") return;
+      if(item.querySelector(":scope > .ed-remove")) return;
+      var b = makeBtn("−", "Quitar este elemento", "ed-remove");
+      b.addEventListener("click", function(){ item.remove(); setDirty(true); toast("Elemento eliminado"); });
+      item.appendChild(b);
+    });
+
+    /* Quitar fila de tabla */
+    content.querySelectorAll("tr[data-item]").forEach(function(row){
+      if(row.querySelector(".ed-row-btn")) return;
+      var b = makeBtn("−", "Quitar esta fila", "ed-row-btn");
+      b.style.marginTop = "8px";
+      b.addEventListener("click", function(){ row.remove(); setDirty(true); toast("Fila eliminada"); });
+      row.cells[0].appendChild(b);
+    });
+
+    /* Añadir pieza al final de cada conjunto */
+    content.querySelectorAll("[data-list]").forEach(function(list){
+      var ghost = list.querySelector(":scope > .ed-add");
+      if(ghost){ list.appendChild(ghost); return; }
+      var type = list.getAttribute("data-list");
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "ed-ctl ed-add";
+      b.textContent = "Añadir"; b.title = "Añadir elemento";
+      b.addEventListener("click", function(){ addItem(list, type); });
+      list.appendChild(b);
+    });
+
+    /* Herramientas de lámina */
+    content.querySelectorAll("[data-plate-tools]").forEach(function(tools){
+      if(tools.dataset.built === "1") return;
+      tools.dataset.built = "1";
+      var section = tools.closest("[data-section]");
+
+      var addBlock = makeBtn("+ Bloque", "Añadir bloque de texto a esta lámina");
+      addBlock.addEventListener("click", function(){
+        var node = cloneTpl("block"); if(!node) return;
+        var list = section.querySelector("[data-list]");
+        if(list) section.insertBefore(node, list); else section.appendChild(node);
+        refresh(); setDirty(true); toast("Bloque añadido");
+      });
+
+      var tbody = section.querySelector("tbody[data-rows]");
+      var addRow = makeBtn("+ Fila", "Añadir fila a la tabla");
+      if(!tbody) addRow.style.display = "none";
+      addRow.addEventListener("click", function(){
+        if(!tbody) return;
+        var node = cloneTpl(tbody.getAttribute("data-rows")); if(!node) return;
+        tbody.appendChild(node);
+        refresh(); setDirty(true); toast("Fila añadida");
+      });
+
+      var del = makeBtn("− Lámina", "Eliminar esta lámina completa");
+      del.addEventListener("click", function(){
+        if(!window.confirm("¿Eliminar la lámina completa? Esta acción no se puede deshacer.")) return;
+        section.remove(); setDirty(true); toast("Lámina eliminada");
+      });
+
+      tools.appendChild(addBlock); tools.appendChild(addRow); tools.appendChild(del);
+    });
+
+    /* Añadir lámina: siempre al final del <main> */
+    var addSec = document.getElementById("addSectionBtn");
+    if(!addSec){
+      addSec = document.createElement("button");
+      addSec.type = "button"; addSec.id = "addSectionBtn";
+      addSec.className = "ed-ctl ed-add-section";
+      addSec.textContent = "+ Añadir lámina";
+      addSec.addEventListener("click", addSection);
+    }
+    sections.appendChild(addSec);
+
+    /* Marcos de imagen */
+    content.querySelectorAll("[data-frame]").forEach(function(frame){
+      if(frame.dataset.bound === "1") return;
+      frame.dataset.bound = "1";
+      frame.addEventListener("click", function(){
+        if(!editing) return;
+        targetFrame = frame; imgInput.value = ""; imgInput.click();
+      });
+      if(!frame.querySelector(".frame-clear")){
+        var c = makeBtn("×", "Quitar imagen", "frame-clear");
+        c.addEventListener("click", function(ev){
+          ev.stopPropagation();
+          var img = frame.querySelector("img");
+          if(img){ img.removeAttribute("src"); img.hidden = true; }
+          frame.classList.remove("has-img");
+          setDirty(true); toast("Imagen retirada");
+        });
+        frame.appendChild(c);
+      }
+    });
+  }
+
+  function addItem(list, type){
+    var node = cloneTpl(type); if(!node) return;
+    list.insertBefore(node, list.querySelector(":scope > .ed-add"));
+    refresh(); setDirty(true); toast("Elemento añadido");
+    var first = node.querySelector("[data-ed]"); if(first) first.focus();
+  }
+
+  function addSection(){
+    var node = cloneTpl("section"); if(!node) return;
+    var n = sections.querySelectorAll("[data-section]").length + 1;
+    var code = (n < 10 ? "0" + n : "" + n);
+    node.id = "a" + code;
+    var tag = node.querySelector("[data-code]"); if(tag) tag.textContent = "A-" + code;
+    sections.appendChild(node);
+    refresh(); setDirty(true); toast("Lámina añadida");
+    if(node.scrollIntoView) node.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  /* ---------- Carga de imagen ---------- */
+  imgInput.addEventListener("change", function(){
+    var file = imgInput.files && imgInput.files[0];
+    if(!file || !targetFrame) return;
+    if(file.size > 1.6 * 1024 * 1024){ toast("Imagen muy pesada: usa un archivo menor a 1,5 MB"); return; }
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = targetFrame.querySelector("img");
+      if(!img){ img = document.createElement("img"); targetFrame.insertBefore(img, targetFrame.firstChild); }
+      img.src = e.target.result; img.hidden = false; img.alt = "Imagen del proyecto";
+      targetFrame.classList.add("has-img"); targetFrame = null;
+      setDirty(true); toast("Imagen cargada");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ---------- Edición en pantalla ---------- */
+  function setEditable(on){
+    content.querySelectorAll("[data-ed]").forEach(function(el){
+      if(on) el.setAttribute("contenteditable", "true");
+      else   el.removeAttribute("contenteditable");
+    });
+  }
+  function refresh(){ buildControls(); setEditable(editing); }
+
+  content.addEventListener("input", function(e){
+    if(editing && e.target.hasAttribute && e.target.hasAttribute("contenteditable")) setDirty(true);
+  });
+  content.addEventListener("paste", function(e){
+    if(!editing) return;
+    e.preventDefault();
+    var text = (e.clipboardData || window.clipboardData).getData("text/plain");
+    document.execCommand("insertText", false, text);
+  });
+  content.addEventListener("click", function(e){
+    var a = e.target.closest && e.target.closest("a");
+    if(editing && a) e.preventDefault();
+  });
+
+  /* ---------- Limpieza, guardado y exportación ---------- */
+  function clean(root){
+    root.querySelectorAll(".ed-ctl").forEach(function(n){ n.remove(); });
+    root.querySelectorAll("[contenteditable]").forEach(function(n){ n.removeAttribute("contenteditable"); });
+    root.querySelectorAll("[data-built]").forEach(function(n){ n.removeAttribute("data-built"); });
+    root.querySelectorAll("[data-bound]").forEach(function(n){ n.removeAttribute("data-bound"); });
+    return root;
+  }
+  function currentHTML(){ return clean(content.cloneNode(true)).innerHTML; }
+
+  function save(silent){
+    var result = storageSet(currentHTML());
+    setDirty(false);
+    if(silent) return result;
+    if(result === "quota")       toast("No hay espacio: reduce el peso de las imágenes");
+    else if(result === "memory") toast("Guardado sólo en esta sesión — usa Exportar HTML");
+    else                         toast("Cambios guardados");
+    return result;
+  }
+
+  function exportHTML(){
+    save(true);                                   // El archivo y lo guardado coinciden
+    var doc = document.documentElement.cloneNode(true);
+    clean(doc);
+    doc.querySelector("body").classList.remove("edit-on");
+    var m = doc.querySelector("#modal");     if(m) m.classList.remove("open");
+    var t = doc.querySelector("#toast");     if(t){ t.classList.remove("show"); t.textContent = ""; }
+    var p = doc.querySelector("#pinInput");  if(p) p.removeAttribute("value");
+    var e = doc.querySelector("#pinErr");    if(e) e.textContent = "";
+    var s = doc.querySelector("#dockState"); if(s) s.textContent = "Sin cambios";
+    var k = doc.querySelector("#lockLabel");  if(k) k.textContent = "Acceso";
+
+    var blob = new Blob(["<!DOCTYPE html>\n" + doc.outerHTML], { type:"text/html;charset=utf-8" });
+    var url  = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url; link.download = "index.html";   // listo para reemplazar el index.html del sitio publicado
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+    toast("Archivo exportado");
+  }
+
+  function reset(){
+    if(!window.confirm("¿Restablecer el contenido original? Se perderán todos los cambios guardados.")) return;
+    storageClear();
+    content.innerHTML = ORIGINAL;
+    sections = document.getElementById("sections") || sections;
+    refresh(); setDirty(false); toast("Contenido restablecido");
+  }
+
+  /* ---------- Acceso ---------- */
+  function openModal(){
+    modal.classList.add("open"); pinErr.textContent = ""; pinInput.value = "";
+    setTimeout(function(){ pinInput.focus(); }, 40);
+  }
+  function closeModal(){ modal.classList.remove("open"); }
+  function tryPin(){
+    if(pinInput.value === PIN){ closeModal(); enterEdit(); }
+    else{ pinErr.textContent = "Clave incorrecta"; pinInput.value = ""; pinInput.focus(); }
+  }
+  function enterEdit(){
+    editing = true; body.classList.add("edit-on");
+    lockLabel.textContent = "Editando";
+    refresh(); setDirty(false); toast("Modo edición activo");
+  }
+  function exitEdit(){
+    if(dirty && !window.confirm("Hay cambios sin guardar. ¿Salir de todos modos?")) return;
+    editing = false; body.classList.remove("edit-on");
+    lockLabel.textContent = "Acceso"; setEditable(false); toast("Modo lectura");
+  }
+
+  /* ---------- Eventos ---------- */
+  document.getElementById("lockBtn").addEventListener("click", function(){ editing ? exitEdit() : openModal(); });
+  document.getElementById("pinOk").addEventListener("click", tryPin);
+  document.getElementById("pinCancel").addEventListener("click", closeModal);
+  pinInput.addEventListener("keydown", function(e){ if(e.key === "Enter") tryPin(); });
+  modal.addEventListener("click", function(e){ if(e.target === modal) closeModal(); });
+
+  document.getElementById("saveBtn").addEventListener("click", function(){ save(false); });
+  document.getElementById("exportBtn").addEventListener("click", exportHTML);
+  document.getElementById("resetBtn").addEventListener("click", reset);
+  document.getElementById("exitBtn").addEventListener("click", exitEdit);
+
+  document.addEventListener("keydown", function(e){
+    if((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "E" || e.key === "e")){
+      e.preventDefault(); editing ? exitEdit() : openModal();
+    }
+    if((e.ctrlKey || e.metaKey) && (e.key === "s" || e.key === "S") && editing){ e.preventDefault(); save(false); }
+    if(e.key === "Escape" && modal.classList.contains("open")) closeModal();
+  });
+
+  window.addEventListener("beforeunload", function(e){
+    if(editing && dirty){ e.preventDefault(); e.returnValue = ""; }
+  });
+
+  /* ---------- Arranque ---------- */
+  var saved = storageGet();
+  if(saved){
+    content.innerHTML = saved;
+    sections = document.getElementById("sections") || sections;
+  }
+  refresh(); setDirty(false);
+  content.querySelectorAll("[data-frame] img[src]").forEach(function(img){
+    img.hidden = false;
+    img.closest("[data-frame]").classList.add("has-img");
+  });
+})();
+</script>
+
+
+
+</body></html>
